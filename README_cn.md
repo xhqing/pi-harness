@@ -4,15 +4,15 @@
   </a>
 </p>
 <p align="center">
-  <a href="https://github.com/xhqing/pi/releases"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/xhqing/pi?style=flat-square" /></a>
+  <a href="https://github.com/xhqing/pi-harness/releases"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/xhqing/pi-harness?style=flat-square" /></a>
   <a href="./LICENSE.md"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" /></a>
 </p>
 
 [中文] | [English](README.md)
 
-# Pi Agent Harness
+# pi-harness
 
-本仓库是 [Pi agent harness](https://github.com/earendil-works/pi) 项目的独立分叉：2026-09-19 起在 GitHub 断开与原上游的 fork 关系，此后自主演进、不再与上游同步，与原作者及上游社区无关联。包名沿用历史的 `@earendil-works/*` scope，未做改名。
+**pi-harness** 是 [Pi agent harness](https://github.com/earendil-works/pi) 项目的独立分叉：2026-09-19 起在 GitHub 断开与原上游的 fork 关系，此后自主演进、不再与上游同步，与原作者及上游社区无关联。包名沿用历史的 `@earendil-works/*` scope，未做改名。
 
 * **[@earendil-works/pi-coding-agent](packages/coding-agent)**：交互式 coding agent CLI
 * **[@earendil-works/pi-agent-core](packages/agent)**：agent 运行时（工具调用与状态管理）
@@ -87,8 +87,8 @@ Copyright (c) 2025 Mario Zechner（原 Pi 项目）。Copyright (c) 2026 All Con
 
 ### 署名方式
 
-引用本项目时请署名到项目而非个人：注明仓库地址（`https://github.com/xhqing/pi`），并保留 [LICENSE.md](LICENSE.md) 中的版权声明。
+引用本项目时请署名到项目而非个人：注明仓库地址（`https://github.com/xhqing/pi-harness`），并保留 [LICENSE.md](LICENSE.md) 中的版权声明。
 
 ### 项目地址引用
 
-仓库地址：`https://github.com/xhqing/pi`
+仓库地址：`https://github.com/xhqing/pi-harness`

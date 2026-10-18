@@ -100,7 +100,7 @@ if (process.platform !== "win32") fs.chmodSync(piPath, 0o755);
 			"fetch",
 			vi.fn(async (input: string | URL | Request) => {
 				const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-				if (url.includes("xhqing/pi")) {
+				if (url.includes("xhqing/pi-harness")) {
 					return Response.json({ tag_name: `v${targetVersion}` });
 				}
 				const releaseUrl = `https://example.test/api/installer/releases/${targetVersion}`;
@@ -647,7 +647,7 @@ if (process.platform !== "win32") fs.chmodSync(piPath, 0o755);
 			vi.fn(async (input: string | URL | Request) => {
 				const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
 				requestedUrls.push(url);
-				if (url.includes("xhqing/pi")) return Response.json({ tag_name: `v${targetVersion}` });
+				if (url.includes("xhqing/pi-harness")) return Response.json({ tag_name: `v${targetVersion}` });
 				return Response.json({});
 			}),
 		);
@@ -660,7 +660,7 @@ if (process.platform !== "win32") fs.chmodSync(piPath, 0o755);
 		const output = [...logSpy.mock.calls, ...errorSpy.mock.calls].map(([message]) => String(message)).join("\n");
 		const currentVersion = readFileSync(join(managedRoot, "current-version"), "utf8").trim();
 		const updated = currentVersion === targetVersion || currentVersion === `v${targetVersion}`;
-		const guided = output.includes("xhqing/pi");
+		const guided = output.includes("xhqing/pi-harness");
 		// Issue #4 allows either a fork-hosted installer source (update succeeds)
 		// or disabling managed updates with fork guidance in the output.
 		expect(updated || guided).toBe(true);
@@ -823,7 +823,7 @@ else fs.writeFileSync(${JSON.stringify(recordPath)},JSON.stringify(args));
 			const installed =
 				existsSync(recordPath) &&
 				(JSON.parse(readFileSync(recordPath, "utf-8")) as string[]).some((entry) => entry.includes(targetVersion));
-			const guided = output.includes("xhqing/pi");
+			const guided = output.includes("xhqing/pi-harness");
 			// Issue #4 allows either pointing pi update at the fork's own source
 			// (an install runs) or disabling it with fork guidance (no install).
 			expect(installed || guided).toBe(true);

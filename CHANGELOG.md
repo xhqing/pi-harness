@@ -6,7 +6,15 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 ### Changed
 
+- **Repository renamed to `pi-harness`** (2026-10-18): the GitHub repository is now `xhqing/pi-harness` (renamed from `xhqing/pi`; old links redirect automatically), to set the fork apart from the upstream `earendil-works/pi` project. All repository URLs inside the repo were updated to the new name — README titles/badges/links (both languages), the LICENSE note, `FORK_RELEASES_URL` / `LATEST_VERSION_URL` in the update check and their tests, fork guidance in `package-manager-cli.ts` / `config.ts` / `interactive-mode.ts`, `DEVELOPMENT.md` / `MEMO.md` references, and the `repository.url` field of every workspace package (which still pointed at the upstream repo). Runtime identities are intentionally unchanged: the `pi` CLI command, the `.pi` config directory, `PI_*` environment variables, npm package names (`@earendil-works/*` scope), and release asset names (`pi-coding-agent-<version>.tgz`) stay as they are.
+
 - Mount the Agent-presence symlinks (2026-10-17 user revision): added `AGENTS.md → ../FullStackEngineerAgent/AGENTS.md` and `.pi → ../FullStackEngineerAgent/.pi` as relative symlinks and committed them to the repository. Under the new rule, agent-exclusive file entities live only in the responsible Agent project, while sub-projects mount these links so that a session started in the sub-project inherits the responsible agent's identity, rules and skills; the links dangle harmlessly when the repository is cloned in isolation.
+
+### Fixed
+
+- `packages/ai/test/zai-coding-plan-models.test.ts`: the GLM-4.6V China Coding Plan assertion now expects the refreshed upstream cache-read price (`cacheRead: 0.05`), which aligns the CI build (it hydrates `providers/data/*.json` from the upstream catalog at build time) and matches the upstream catalog-drift fix (earendil-works/pi `482c1381`). The assertion had pinned `cacheRead: 0`, so every CI run failed once upstream changed the value.
+
+- `package-lock.json`: the root and workspace-root version fields are synced to `0.0.6` (they had drifted to `0.0.5` during the 0.0.6 version bump; `VERSION` and `package.json` were already `0.0.6`).
 
 ## [0.0.6] - 2026-10-15
 

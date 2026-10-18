@@ -1,7 +1,7 @@
 MIT License
 
 Copyright (c) 2025 Mario Zechner (original Pi project)
-Copyright (c) 2026 All Contributors (xhqing/pi fork)
+Copyright (c) 2026 All Contributors (xhqing/pi-harness fork)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
