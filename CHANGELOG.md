@@ -6,6 +6,8 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 ### Changed
 
+- **Repository renamed to `pi-harness`** (2026-10-18): the GitHub repository is now `xhqing/pi-harness` (renamed from `xhqing/pi`; old links redirect automatically), to set the fork apart from the upstream `earendil-works/pi` project. All repository URLs inside the repo were updated to the new name — README titles/badges/links (both languages), the LICENSE note, `FORK_RELEASES_URL` / `LATEST_VERSION_URL` in the update check and their tests, fork guidance in `package-manager-cli.ts` / `config.ts` / `interactive-mode.ts`, `DEVELOPMENT.md` / `MEMO.md` references, and the `repository.url` field of every workspace package (which still pointed at the upstream repo). Runtime identities are intentionally unchanged: the `pi` CLI command, the `.pi` config directory, `PI_*` environment variables, npm package names (`@earendil-works/*` scope), and release asset names (`pi-coding-agent-<version>.tgz`) stay as they are.
+
 - Mount the Agent-presence symlinks (2026-10-17 user revision): added `AGENTS.md → ../FullStackEngineerAgent/AGENTS.md` and `.pi → ../FullStackEngineerAgent/.pi` as relative symlinks and committed them to the repository. Under the new rule, agent-exclusive file entities live only in the responsible Agent project, while sub-projects mount these links so that a session started in the sub-project inherits the responsible agent's identity, rules and skills; the links dangle harmlessly when the repository is cloned in isolation.
 
 ## [0.0.6] - 2026-10-15

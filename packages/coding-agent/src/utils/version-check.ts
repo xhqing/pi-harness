@@ -4,10 +4,10 @@ import { getPiUserAgent } from "./pi-user-agent.ts";
 
 // This repo is an independent fork, detached from earendil-works/pi on
 // 2026-09-19. Update checks therefore read this fork's own GitHub Releases
-// (xhqing/pi), never the upstream pi.dev endpoints, so update notices only
+// (xhqing/pi-harness), never the upstream pi.dev endpoints, so update notices only
 // appear for fork releases and can never suggest installing upstream builds.
-const LATEST_VERSION_URL = "https://api.github.com/repos/xhqing/pi/releases/latest";
-export const FORK_RELEASES_URL = "https://github.com/xhqing/pi";
+const LATEST_VERSION_URL = "https://api.github.com/repos/xhqing/pi-harness/releases/latest";
+export const FORK_RELEASES_URL = "https://github.com/xhqing/pi-harness";
 const DEFAULT_VERSION_CHECK_TIMEOUT_MS = 10000;
 
 export interface LatestPiRelease {

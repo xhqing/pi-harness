@@ -191,7 +191,7 @@ async function runManagedSelfUpdate(managedRoot: string, version: string): Promi
 	const installerApiBase = getInstallerApiBase();
 	if (!installerApiBase) {
 		throw new Error(
-			`Installer-managed updates need PI_INSTALLER_API_BASE; this fork (xhqing/pi) does not run the upstream installer API. Update from the fork's releases at ${FORK_RELEASES_URL} instead.`,
+			`Installer-managed updates need PI_INSTALLER_API_BASE; this fork (xhqing/pi-harness) does not run the upstream installer API. Update from the fork's releases at ${FORK_RELEASES_URL} instead.`,
 		);
 	}
 

@@ -53,7 +53,7 @@ describe("version checks", () => {
 		expect(release?.version).toMatch(/^v?1\.2\.4$/);
 		expect(fetchMock).toHaveBeenCalledOnce();
 		const [requestedUrl, requestInit] = fetchMock.mock.calls[0];
-		expect(String(requestedUrl)).toContain("xhqing/pi");
+		expect(String(requestedUrl)).toContain("xhqing/pi-harness");
 		expect(String(requestedUrl)).not.toContain("pi.dev");
 		expect(requestInit).toEqual(
 			expect.objectContaining({

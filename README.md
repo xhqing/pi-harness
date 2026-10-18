@@ -4,15 +4,15 @@
   </a>
 </p>
 <p align="center">
-  <a href="https://github.com/xhqing/pi/releases"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/xhqing/pi?style=flat-square" /></a>
+  <a href="https://github.com/xhqing/pi-harness/releases"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/xhqing/pi-harness?style=flat-square" /></a>
   <a href="./LICENSE.md"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" /></a>
 </p>
 
 **English** | [简体中文](README_cn.md)
 
-# Pi Agent Harness
+# pi-harness
 
-This is an independent fork of the [Pi agent harness](https://github.com/earendil-works/pi) project. The fork was detached from the upstream repository on 2026-09-19 and evolves on its own; it is not affiliated with or synchronized with upstream anymore. Package names keep the historical `@earendil-works/*` scope.
+**pi-harness** is an independent fork of the [Pi agent harness](https://github.com/earendil-works/pi) project. The fork was detached from the upstream repository on 2026-09-19 and evolves on its own; it is not affiliated with or synchronized with upstream anymore. Package names keep the historical `@earendil-works/*` scope.
 
 * **[@earendil-works/pi-coding-agent](packages/coding-agent)**: Interactive coding agent CLI
 * **[@earendil-works/pi-agent-core](packages/agent)**: Agent runtime with tool calling and state management
@@ -87,8 +87,8 @@ Portions of this repository originate from [earendil-works/pi](https://github.co
 
 ### Attribution
 
-When referencing this project, please attribute it to the project rather than to any individual: include the repository URL (`https://github.com/xhqing/pi`) and preserve the copyright notices contained in [LICENSE.md](LICENSE.md).
+When referencing this project, please attribute it to the project rather than to any individual: include the repository URL (`https://github.com/xhqing/pi-harness`) and preserve the copyright notices contained in [LICENSE.md](LICENSE.md).
 
 ### Referencing This Project
 
-Repository URL: `https://github.com/xhqing/pi`
+Repository URL: `https://github.com/xhqing/pi-harness`
