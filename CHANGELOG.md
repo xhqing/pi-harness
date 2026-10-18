@@ -10,6 +10,10 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 - Mount the Agent-presence symlinks (2026-10-17 user revision): added `AGENTS.md → ../FullStackEngineerAgent/AGENTS.md` and `.pi → ../FullStackEngineerAgent/.pi` as relative symlinks and committed them to the repository. Under the new rule, agent-exclusive file entities live only in the responsible Agent project, while sub-projects mount these links so that a session started in the sub-project inherits the responsible agent's identity, rules and skills; the links dangle harmlessly when the repository is cloned in isolation.
 
+### Fixed
+
+- `packages/ai/test/zai-coding-plan-models.test.ts`: the GLM-4.6V China Coding Plan assertion now expects the refreshed upstream cache-read price (`cacheRead: 0.05`), which aligns the CI build (it hydrates `providers/data/*.json` from the upstream catalog at build time) and matches the upstream catalog-drift fix (earendil-works/pi `482c1381`). The assertion had pinned `cacheRead: 0`, so every CI run failed once upstream changed the value.
+
 ## [0.0.6] - 2026-10-15
 
 ### Added

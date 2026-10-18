@@ -6,6 +6,8 @@
 
 - Test model references and the coding-agent defaults for the Xiaomi providers now use `mimo-v2.6-pro`, matching the refreshed upstream catalog (the previous `mimo-v2.5-pro` was dropped upstream) ([#30](https://github.com/xhqing/pi/issues/30)).
 
+- `test/zai-coding-plan-models.test.ts`: the GLM-4.6V assertion now expects `cacheRead: 0.05`, aligning with the refreshed upstream catalog (upstream fixed the same assertion in earendil-works/pi `482c1381`). The CI build hydrates `providers/data/*.json` from the upstream catalog, so asserted values must match the current upstream data.
+
 ## [0.0.6] - 2026-10-15
 
 ### Fixed
