@@ -147,6 +147,10 @@ export class ModelRuntime implements Models {
 		auth: new Map(),
 	};
 	private availabilityRefreshSeq = 0;
+	/** Generation of the newest state change (credentials or provider set); older passes are stale. */
+	private availabilityInvalidatedSeq = 0;
+	/** Generation of the newest availability pass that was published to the snapshot. */
+	private availabilityAppliedSeq = 0;
 	private availabilityErrorSeq = 0;
 	private readonly providerAvailabilitySeq = new Map<string, number>();
 	private availabilityError: string | undefined;
@@ -297,7 +301,13 @@ export class ModelRuntime implements Models {
 			),
 			this.credentials.list({ signal }),
 		]);
-		if (seq !== this.availabilityRefreshSeq) return;
+		// Publication order decides which snapshot wins, not start order: a pass only publishes
+		// when it is newer than the last published pass and did not start before the last state
+		// change. Concurrent passes therefore stop cancelling each other, and a caller that
+		// awaited a pass never observes a snapshot older than that pass.
+		if (seq <= this.availabilityAppliedSeq) return;
+		if (seq < this.availabilityInvalidatedSeq) return;
+		this.availabilityAppliedSeq = seq;
 		const auth = new Map(checks);
 		const configuredProviders = new Set(
 			checks
@@ -331,7 +341,7 @@ export class ModelRuntime implements Models {
 
 	private async refreshProviderAvailability(providerId: string, signal: AbortSignal): Promise<void> {
 		// Invalidate any full availability pass that started before this credential change.
-		++this.availabilityRefreshSeq;
+		++this.availabilityInvalidatedSeq;
 		const providerSeq = (this.providerAvailabilitySeq.get(providerId) ?? 0) + 1;
 		this.providerAvailabilitySeq.set(providerId, providerSeq);
 		const errorSeq = ++this.availabilityErrorSeq;
