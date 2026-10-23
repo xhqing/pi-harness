@@ -6,6 +6,8 @@
 
 - The footer marks API-key providers that declare `auth.apiKey.isSubscription` as subscription-backed (`$0.000 (sub)`), including extension-registered plans such as `volcengine-agent-plan`. The `kimi-coding` special case in the footer is gone — its built-in API-key auth now sets the flag itself ([#9](https://github.com/xhqing/pi-harness/issues/9)).
 
+- The default model for `github-copilot` is now `gpt-6.1-sol`; the previous default (`gpt-5.4`) was removed by the upstream catalog refresh, which made the built-in-defaults test fail.
+
 ### Changed
 
 - Repository renamed to `pi-harness` (`xhqing/pi` → `xhqing/pi-harness`): repository URLs in this package were updated — `FORK_RELEASES_URL` / `LATEST_VERSION_URL` (update check), fork-guidance messages, `repository.url` in `package.json`, and the related tests. Runtime identities (CLI name, config directory, environment variables, npm package name, release asset names) are unchanged. See the root `CHANGELOG.md` for details.
