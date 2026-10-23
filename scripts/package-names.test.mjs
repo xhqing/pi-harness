@@ -27,8 +27,8 @@ const OWN_PACKAGES = [
 	"pi-tui",
 	"chord",
 ];
-// Allow one or more separators so escaped forms such as `@earendil-works\/pi-ai`
-// inside regex literals are caught as well.
+// Allow one or more separators so escaped-slash forms inside regex literals
+// are caught as well.
 const LEGACY_NAME_PATTERN = new RegExp(`${LEGACY_PREFIX}[\\\\/]+(?:${OWN_PACKAGES.join("|")})(?![\\w-])`);
 
 // The extension loader deliberately keeps scoped aliases so extensions written
@@ -38,8 +38,11 @@ const LEGACY_SCOPE_ALLOWLIST = new Set(["packages/coding-agent/src/core/extensio
 
 const BINARY_EXTENSION = /\.(?:png|jpe?g|gif|webp|ico|pdf|wasm|node|tgz|zip|woff2?|ttf)$/i;
 
-function trackedFiles() {
-	return execFileSync("git", ["ls-files", "-z"], { cwd: repositoryRoot, encoding: "utf8" })
+function repositoryFiles() {
+	return execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "-z"], {
+		cwd: repositoryRoot,
+		encoding: "utf8",
+	})
 		.split("\0")
 		.filter(Boolean);
 }
@@ -61,7 +64,7 @@ function readTrackedText(path) {
 }
 
 test("workspace packages use unscoped names", () => {
-	const manifests = trackedFiles().filter((path) => {
+	const manifests = repositoryFiles().filter((path) => {
 		const segments = path.split("/");
 		return path.endsWith("package.json") && !segments.includes("node_modules") && !segments.includes("dist");
 	});
@@ -77,9 +80,9 @@ test("workspace packages use unscoped names", () => {
 	assert.equal(codingAgent.name, "pi-coding-agent");
 });
 
-test("no scoped own package names remain in tracked files", () => {
+test("no scoped own package names remain in repository files", () => {
 	const leftovers = [];
-	for (const path of trackedFiles()) {
+	for (const path of repositoryFiles()) {
 		if (path.endsWith("CHANGELOG.md")) continue;
 		if (BINARY_EXTENSION.test(path)) continue;
 		if (LEGACY_SCOPE_ALLOWLIST.has(path)) continue;
