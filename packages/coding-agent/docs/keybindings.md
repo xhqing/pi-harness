@@ -72,6 +72,14 @@ The dedicated history actions always change history entries, regardless of the c
 | `tui.editor.yankPop` | `alt+y` | Cycle through deleted text after yank |
 | `tui.editor.undo` | `ctrl+-` (`ctrl+z` on Windows; `alt+z` on WSL) | Undo last edit |
 
+### TUI Editor Selection
+
+| Keybinding id | Default | Description |
+|--------|---------|-------------|
+| `tui.editor.selectAll` | `super+a` | Select all editor text (Cmd+A) |
+
+With everything selected, `backspace` / `delete` clears the editor, typing a character replaces the whole text, and any cursor movement, mouse click, or `escape` cancels the selection. macOS terminals usually keep `Cmd+A` for their own "select all", so the key only reaches pi after the terminal is configured to pass it through — see [Terminal setup](terminal-setup.md#selecting-all-text-cmda).
+
 ### TUI Clipboard and Selection
 
 | Keybinding id | Default | Description |

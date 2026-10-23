@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `Editor` supports select-all via the new `tui.editor.selectAll` keybinding (default `super+a`). The whole buffer is rendered inverse-video; `backspace` / `delete` clears it, typing replaces it, and cursor movement, mouse clicks, or `escape` cancel the selection ([#10](https://github.com/xhqing/pi-harness/issues/10)).
+
 ## [0.0.6] - 2026-10-15
 
 ## [0.86.0] - 2026-09-19

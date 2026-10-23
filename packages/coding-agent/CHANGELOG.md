@@ -12,6 +12,8 @@
 
 ### Changed
 
+- `docs/keybindings.md` and `docs/terminal-setup.md` document the new editor select-all action (`tui.editor.selectAll`, Cmd+A): terminal pass-through configuration for Ghostty, iTerm2, kitty, WezTerm, and VS Code, plus the rebind fallback for terminals that cannot forward the key ([#10](https://github.com/xhqing/pi-harness/issues/10)).
+
 - Repository renamed to `pi-harness` (`xhqing/pi` → `xhqing/pi-harness`): repository URLs in this package were updated — `FORK_RELEASES_URL` / `LATEST_VERSION_URL` (update check), fork-guidance messages, `repository.url` in `package.json`, and the related tests. Runtime identities (CLI name, config directory, environment variables, npm package name, release asset names) are unchanged. See the root `CHANGELOG.md` for details.
 
 ## [0.0.6] - 2026-10-15

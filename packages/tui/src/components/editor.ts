@@ -341,6 +341,9 @@ export class Editor implements Component, Focusable {
 	// Character jump mode
 	private jumpMode: "forward" | "backward" | null = null;
 
+	// Full-text selection (Cmd+A). Minimal implementation: select all or nothing.
+	private selectAllActive = false;
+
 	// Preferred visual column for vertical cursor movement (sticky column)
 	private preferredVisualCol: number | null = null;
 
@@ -428,6 +431,41 @@ export class Editor implements Component, Focusable {
 		return this.state.lines.length === 1 && this.state.lines[0] === "";
 	}
 
+	/** Select the whole editor contents (Cmd+A). The caret moves to the end. */
+	private selectAll(): void {
+		this.cancelAutocomplete();
+		this.exitHistoryBrowsing();
+		this.lastAction = null;
+		if (this.isEditorEmpty()) {
+			this.selectAllActive = false;
+			this.tui.requestRender();
+			return;
+		}
+		this.selectAllActive = true;
+		this.state.cursorLine = this.state.lines.length - 1;
+		this.setCursorCol(this.state.lines[this.state.cursorLine]?.length ?? 0);
+		this.tui.requestRender();
+	}
+
+	private clearSelection(): void {
+		if (!this.selectAllActive) return;
+		this.selectAllActive = false;
+		this.tui.requestRender();
+	}
+
+	/** Replace the selected (whole) contents with `text` as one undo step. */
+	private replaceSelection(text: string): void {
+		this.pushUndoSnapshot();
+		this.selectAllActive = false;
+		this.lastAction = "type-word";
+		this.state.lines = [""];
+		this.state.cursorLine = 0;
+		this.setCursorCol(0);
+		this.scrollOffset = 0;
+		if (text) this.insertCharacter(text, true);
+		else if (this.onChange) this.onChange(this.getText());
+	}
+
 	private isOnFirstVisualLine(): boolean {
 		const visualLines = this.buildVisualLineMap(this.lastWidth);
 		const currentVisualLine = this.findCurrentVisualLine(visualLines);
@@ -479,6 +517,7 @@ export class Editor implements Component, Focusable {
 
 	/** Internal setText that doesn't reset history state - used by navigateHistory */
 	private setTextInternal(text: string, cursorPlacement: "start" | "end" = "end"): void {
+		this.selectAllActive = false;
 		const lines = text.split("\n");
 		this.state.lines = lines.length === 0 ? [""] : lines;
 		this.state.cursorLine = cursorPlacement === "start" ? 0 : this.state.lines.length - 1;
@@ -565,8 +604,9 @@ export class Editor implements Component, Focusable {
 			let lineVisibleWidth = visibleWidth(layoutLine.text);
 			let cursorInPadding = false;
 
-			// Add cursor if this line has it
-			if (layoutLine.hasCursor && layoutLine.cursorPos !== undefined) {
+			// Add cursor if this line has it (a full selection highlights everything,
+			// so the fake caret block is skipped to keep the inverse-video run intact).
+			if (layoutLine.hasCursor && layoutLine.cursorPos !== undefined && !this.selectAllActive) {
 				const before = displayText.slice(0, layoutLine.cursorPos);
 				const after = displayText.slice(layoutLine.cursorPos);
 
@@ -597,6 +637,10 @@ export class Editor implements Component, Focusable {
 						cursorInPadding = true;
 					}
 				}
+			}
+
+			if (this.selectAllActive && displayText.length > 0) {
+				displayText = `\x1b[7m${displayText}\x1b[0m`;
 			}
 
 			// Calculate padding based on actual visible width
@@ -681,6 +725,7 @@ export class Editor implements Component, Focusable {
 			visualLines[visualLineIndex + 1]?.logicalLine !== visualLine.logicalLine;
 		if (!isLastSegment && targetIndex === chunk.length && chunk.length > 0) targetIndex = lastGraphemeIndex;
 
+		this.selectAllActive = false;
 		this.state.cursorLine = visualLine.logicalLine;
 		this.setCursorCol(visualLine.startCol + targetIndex);
 		this.lastAction = null;
@@ -748,6 +793,44 @@ export class Editor implements Component, Focusable {
 		if (kb.matches(data, "tui.editor.undo")) {
 			this.undo();
 			return;
+		}
+
+		// Select all (Cmd+A by default; terminals must pass the modifier through).
+		if (kb.matches(data, "tui.editor.selectAll")) {
+			this.selectAll();
+			return;
+		}
+
+		// While everything is selected: edits replace the whole buffer, any other
+		// action (navigation, history, escape, ...) first cancels the selection.
+		if (this.selectAllActive) {
+			if (matchesKey(data, "escape")) {
+				this.clearSelection();
+				return;
+			}
+			if (
+				kb.matches(data, "tui.editor.deleteCharBackward") ||
+				matchesKey(data, "shift+backspace") ||
+				kb.matches(data, "tui.editor.deleteCharForward") ||
+				matchesKey(data, "shift+delete") ||
+				kb.matches(data, "tui.editor.deleteWordBackward") ||
+				kb.matches(data, "tui.editor.deleteWordForward") ||
+				kb.matches(data, "tui.editor.deleteToLineStart") ||
+				kb.matches(data, "tui.editor.deleteToLineEnd")
+			) {
+				this.replaceSelection("");
+				return;
+			}
+			const printableSelection = decodePrintableKey(data);
+			if (printableSelection !== undefined) {
+				this.replaceSelection(printableSelection);
+				return;
+			}
+			if (data.length > 0 && data.charCodeAt(0) >= 32 && !data.includes("\x1b")) {
+				this.replaceSelection(data);
+				return;
+			}
+			this.clearSelection();
 		}
 
 		// Handle autocomplete mode
@@ -1130,6 +1213,7 @@ export class Editor implements Component, Focusable {
 	insertTextAtCursor(text: string): void {
 		if (!text) return;
 		this.cancelAutocomplete();
+		this.selectAllActive = false;
 		this.pushUndoSnapshot();
 		this.lastAction = null;
 		this.exitHistoryBrowsing();
@@ -1257,6 +1341,7 @@ export class Editor implements Component, Focusable {
 	private handlePaste(pastedText: string): void {
 		this.cancelAutocomplete();
 		this.exitHistoryBrowsing();
+		this.selectAllActive = false;
 		this.lastAction = null;
 
 		this.pushUndoSnapshot();
@@ -1360,6 +1445,7 @@ export class Editor implements Component, Focusable {
 
 	private submitValue(): void {
 		this.cancelAutocomplete();
+		this.selectAllActive = false;
 		const result = this.expandPasteMarkers(this.state.lines.join("\n")).trim();
 
 		this.state = { lines: [""], cursorLine: 0, cursorCol: 0 };
@@ -2116,6 +2202,7 @@ export class Editor implements Component, Focusable {
 
 	private undo(): void {
 		this.exitHistoryBrowsing();
+		this.selectAllActive = false;
 		const snapshot = this.undoStack.pop();
 		if (!snapshot) return;
 		Object.assign(this.state, snapshot.state);
