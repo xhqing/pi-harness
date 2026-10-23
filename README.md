@@ -12,11 +12,11 @@
 
 # pi-harness
 
-**pi-harness** is an independent fork of the [Pi agent harness](https://github.com/earendil-works/pi) project. The fork was detached from the upstream repository on 2026-09-19 and evolves on its own; it is not affiliated with or synchronized with upstream anymore. Package names keep the historical `@earendil-works/*` scope.
+**pi-harness** is an independent fork of the [Pi agent harness](https://github.com/earendil-works/pi) project. The fork was detached from the upstream repository on 2026-09-19 and evolves on its own; it is not affiliated with or synchronized with upstream anymore. Workspace package names are unscoped (`pi-coding-agent`, `pi-ai`, `pi-tui`, …); the release tarball still carries the fork's own package name.
 
-* **[@earendil-works/pi-coding-agent](packages/coding-agent)**: Interactive coding agent CLI
-* **[@earendil-works/pi-agent-core](packages/agent)**: Agent runtime with tool calling and state management
-* **[@earendil-works/pi-ai](packages/ai)**: Unified multi-provider LLM API (OpenAI, Anthropic, Google, …)
+* **[pi-coding-agent](packages/coding-agent)**: Interactive coding agent CLI
+* **[pi-agent-core](packages/agent)**: Agent runtime with tool calling and state management
+* **[pi-ai](packages/ai)**: Unified multi-provider LLM API (OpenAI, Anthropic, Google, …)
 
 To learn more about Pi:
 
@@ -27,13 +27,13 @@ To learn more about Pi:
 
 | Package | Description |
 |---------|-------------|
-| **[@earendil-works/chord](packages/chord)** | Standalone application-composition runtime for services, replicated state, RPC, and plugins |
-| **[@earendil-works/pi-telemetry](packages/telemetry)** | Vendor-neutral telemetry contracts, reference adapter, conformance tests, and typed schemas |
-| **[@earendil-works/pi-ai](packages/ai)** | Unified multi-provider LLM API (OpenAI, Anthropic, Google, etc.) |
-| **[@earendil-works/pi-durable](packages/durable)** | Durable conversation, task, and document runtime |
-| **[@earendil-works/pi-agent-core](packages/agent)** | Agent runtime with tool calling and state management |
-| **[@earendil-works/pi-coding-agent](packages/coding-agent)** | Interactive coding agent CLI |
-| **[@earendil-works/pi-tui](packages/tui)** | Terminal UI library with differential rendering |
+| **[chord](packages/chord)** | Standalone application-composition runtime for services, replicated state, RPC, and plugins |
+| **[pi-telemetry](packages/telemetry)** | Vendor-neutral telemetry contracts, reference adapter, conformance tests, and typed schemas |
+| **[pi-ai](packages/ai)** | Unified multi-provider LLM API (OpenAI, Anthropic, Google, etc.) |
+| **[pi-durable](packages/durable)** | Durable conversation, task, and document runtime |
+| **[pi-agent-core](packages/agent)** | Agent runtime with tool calling and state management |
+| **[pi-coding-agent](packages/coding-agent)** | Interactive coding agent CLI |
+| **[pi-tui](packages/tui)** | Terminal UI library with differential rendering |
 
 ## Permissions & Containerization
 

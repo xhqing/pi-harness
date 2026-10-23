@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { AgentTool } from "@earendil-works/pi-agent-core";
+import type { AgentTool } from "pi-agent-core";
 import {
 	fauxAssistantMessage,
 	fauxToolCall,
@@ -9,8 +9,8 @@ import {
 	getCurrentSystemPrompt,
 	getSystemMessageText,
 	type TranscriptContext,
-} from "@earendil-works/pi-ai";
-import { getModel } from "@earendil-works/pi-ai/compat";
+} from "pi-ai";
+import { getModel } from "pi-ai/compat";
 import { Type } from "typebox";
 import { describe, expect, test } from "vitest";
 import { createAgentSession } from "../src/core/sdk.ts";

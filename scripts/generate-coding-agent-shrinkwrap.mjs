@@ -9,8 +9,22 @@ const repoRoot = resolve(scriptDir, "..");
 const codingAgentDir = join(repoRoot, "packages/coding-agent");
 const rootLockfilePath = join(repoRoot, "package-lock.json");
 const shrinkwrapPath = join(codingAgentDir, "npm-shrinkwrap.json");
-const internalPackagePrefix = "@earendil-works/pi-";
-const internalPackageNames = new Set(["@earendil-works/chord"]);
+const internalPackageNames = new Set([
+	"chord",
+	"pi-agent-core",
+	"pi-ai",
+	"pi-client",
+	"pi-coding-agent",
+	"pi-coding-agent-install",
+	"pi-durable",
+	"pi-evals",
+	"pi-example-plugin",
+	"pi-protocol",
+	"pi-server",
+	"pi-session-backend-sqlite-node",
+	"pi-telemetry",
+	"pi-tui",
+]);
 const allowedInstallScriptPackages = new Map([
 	["@google/genai@2.21.0", "preinstall is a no-op in the published package"],
 	["esbuild@0.28.2", "postinstall selects and verifies the platform-specific esbuild binary"],
@@ -135,17 +149,16 @@ function getInternalWorkspaces(lockPackages) {
 	const workspaces = new Map();
 
 	for (const [lockPath, entry] of Object.entries(lockPackages)) {
-		if (!lockPath.startsWith("packages/") || lockPath.includes("/node_modules/") || !entry.name || !entry.version) {
+		if (!lockPath.startsWith("packages/") || lockPath.includes("/node_modules/") || !entry.version) {
 			continue;
 		}
-		if (!entry.name.startsWith(internalPackagePrefix) && !internalPackageNames.has(entry.name)) {
+		const packageJson = readJson(join(repoRoot, lockPath, "package.json"));
+		const name = entry.name ?? packageJson.name;
+		if (!name || !internalPackageNames.has(name)) {
 			continue;
 		}
 
-		workspaces.set(entry.name, {
-			lockPath,
-			packageJson: readJson(join(repoRoot, lockPath, "package.json")),
-		});
+		workspaces.set(name, { lockPath, packageJson });
 	}
 
 	return workspaces;

@@ -1,13 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import {
-	BACKGROUND_CONTEXT,
-	type Entry,
-	type JsonlSessionMetadata,
-	JsonlSessionRepo,
-	laneConfig,
-} from "@earendil-works/pi-agent-core";
-import { NodeExecutionEnv } from "@earendil-works/pi-agent-core/node";
+import { BACKGROUND_CONTEXT, type Entry, type JsonlSessionMetadata, JsonlSessionRepo, laneConfig } from "pi-agent-core";
+import { NodeExecutionEnv } from "pi-agent-core/node";
 
 export async function createExperimentalSessions(
 	sessionsRoot: string,

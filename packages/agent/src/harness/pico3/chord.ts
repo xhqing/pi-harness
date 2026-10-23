@@ -1,5 +1,5 @@
-import { type Context, defineService, type MutableReplicatedState, type ReplicatedState } from "@earendil-works/chord";
-import type { Op, Path, Seg } from "@earendil-works/chord/delta";
+import { type Context, defineService, type MutableReplicatedState, type ReplicatedState } from "chord";
+import type { Op, Path, Seg } from "chord/delta";
 import type { ConversationHandle, Harness } from "./harness.ts";
 import type {
 	ConversationSpec,

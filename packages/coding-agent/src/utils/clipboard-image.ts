@@ -1,8 +1,8 @@
-import { getNativeClipboard } from "@earendil-works/pi-tui";
 import { randomUUID } from "crypto";
 import { readFileSync, unlinkSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
+import { getNativeClipboard } from "pi-tui";
 
 import { runClipboardCommand } from "./clipboard-command.ts";
 import { detectSupportedImageMimeType } from "./mime.ts";

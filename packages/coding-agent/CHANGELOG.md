@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Breaking Changes
+
+- The npm package is now `pi-coding-agent` (previously `@earendil-works/pi-coding-agent`). Install it from the GitHub Release tarball / binary as before; the `pi` command, `.pi` config directory, `PI_*` environment variables, and release asset names are unchanged ([#12](https://github.com/xhqing/pi-harness/issues/12)).
+
 ### Fixed
 
 - The footer marks API-key providers that declare `auth.apiKey.isSubscription` as subscription-backed (`$0.000 (sub)`), including extension-registered plans such as `volcengine-agent-plan`. The `kimi-coding` special case in the footer is gone — its built-in API-key auth now sets the flag itself ([#9](https://github.com/xhqing/pi-harness/issues/9)).

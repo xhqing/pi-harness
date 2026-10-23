@@ -1,5 +1,5 @@
 {
-	"name": "@earendil-works/pi-telemetry",
+	"name": "pi-telemetry",
 	"version": "0.0.6",
 	"description": "Vendor-neutral telemetry contracts and typed schema utilities for pi",
 	"type": "module",

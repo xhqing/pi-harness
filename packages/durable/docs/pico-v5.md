@@ -4,8 +4,8 @@ Pico5 is a durable, extensible agent harness. This document is normative.
 Pico5 uses existing package types as follows:
 
 ```ts
-import type { Context, JsonValue } from "@earendil-works/chord";
-import { applyImmutable, type Op } from "@earendil-works/chord/delta";
+import type { Context, JsonValue } from "chord";
+import { applyImmutable, type Op } from "chord/delta";
 import type {
   Message,
   Models,
@@ -15,7 +15,7 @@ import type {
   ToolReference,
   ToolResultMessage,
   UserMessage,
-} from "@earendil-works/pi-ai";
+} from "pi-ai";
 
 type JsonObject = { [key: string]: JsonValue };
 type StoredError = { message: string; detail?: JsonValue };

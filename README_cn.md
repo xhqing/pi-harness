@@ -12,11 +12,11 @@
 
 # pi-harness
 
-**pi-harness** 是 [Pi agent harness](https://github.com/earendil-works/pi) 项目的独立分叉：2026-09-19 起在 GitHub 断开与原上游的 fork 关系，此后自主演进、不再与上游同步，与原作者及上游社区无关联。包名沿用历史的 `@earendil-works/*` scope，未做改名。
+**pi-harness** 是 [Pi agent harness](https://github.com/earendil-works/pi) 项目的独立分叉：2026-09-19 起在 GitHub 断开与原上游的 fork 关系，此后自主演进、不再与上游同步，与原作者及上游社区无关联。workspace 包名已去掉 scope（`pi-coding-agent`、`pi-ai`、`pi-tui` 等），发布 tarball 仍使用本 fork 自己的包名。
 
-* **[@earendil-works/pi-coding-agent](packages/coding-agent)**：交互式 coding agent CLI
-* **[@earendil-works/pi-agent-core](packages/agent)**：agent 运行时（工具调用与状态管理）
-* **[@earendil-works/pi-ai](packages/ai)**：统一多供应商 LLM API（OpenAI、Anthropic、Google 等）
+* **[pi-coding-agent](packages/coding-agent)**：交互式 coding agent CLI
+* **[pi-agent-core](packages/agent)**：agent 运行时（工具调用与状态管理）
+* **[pi-ai](packages/ai)**：统一多供应商 LLM API（OpenAI、Anthropic、Google 等）
 
 想进一步了解 Pi：
 
@@ -27,13 +27,13 @@
 
 | 包 | 说明 |
 |----|------|
-| **[@earendil-works/chord](packages/chord)** | 独立的应用组合运行时：服务、复制状态、RPC 与插件 |
-| **[@earendil-works/pi-telemetry](packages/telemetry)** | 供应商中立的遥测契约、参考适配器、一致性测试与类型化 schema |
-| **[@earendil-works/pi-ai](packages/ai)** | 统一多供应商 LLM API（OpenAI、Anthropic、Google 等） |
-| **[@earendil-works/pi-durable](packages/durable)** | 持久化会话、任务与文档运行时 |
-| **[@earendil-works/pi-agent-core](packages/agent)** | agent 运行时（工具调用与状态管理） |
-| **[@earendil-works/pi-coding-agent](packages/coding-agent)** | 交互式 coding agent CLI |
-| **[@earendil-works/pi-tui](packages/tui)** | 差分渲染的终端 UI 库 |
+| **[chord](packages/chord)** | 独立的应用组合运行时：服务、复制状态、RPC 与插件 |
+| **[pi-telemetry](packages/telemetry)** | 供应商中立的遥测契约、参考适配器、一致性测试与类型化 schema |
+| **[pi-ai](packages/ai)** | 统一多供应商 LLM API（OpenAI、Anthropic、Google 等） |
+| **[pi-durable](packages/durable)** | 持久化会话、任务与文档运行时 |
+| **[pi-agent-core](packages/agent)** | agent 运行时（工具调用与状态管理） |
+| **[pi-coding-agent](packages/coding-agent)** | 交互式 coding agent CLI |
+| **[pi-tui](packages/tui)** | 差分渲染的终端 UI 库 |
 
 ## 权限与容器化
 

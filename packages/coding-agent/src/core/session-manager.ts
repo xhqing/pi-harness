@@ -1,13 +1,3 @@
-import type { AgentMessage } from "@earendil-works/pi-agent-core";
-import {
-	getCurrentSystemMessage,
-	type ImageContent,
-	type Message,
-	type SystemMessage,
-	type TextContent,
-	type Usage,
-	uuidv7,
-} from "@earendil-works/pi-ai";
 import { randomUUID } from "crypto";
 import {
 	appendFileSync,
@@ -23,6 +13,16 @@ import {
 } from "fs";
 import { readdir, stat } from "fs/promises";
 import { join, resolve } from "path";
+import type { AgentMessage } from "pi-agent-core";
+import {
+	getCurrentSystemMessage,
+	type ImageContent,
+	type Message,
+	type SystemMessage,
+	type TextContent,
+	type Usage,
+	uuidv7,
+} from "pi-ai";
 import { createInterface } from "readline";
 import { StringDecoder } from "string_decoder";
 import { APP_NAME, getAgentDir as getDefaultAgentDir, getSessionsDir } from "../config.ts";
