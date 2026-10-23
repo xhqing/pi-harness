@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- `ApiKeyAuth` gained an optional `isSubscription` flag, and `envApiKeyAuth` accepts it as a third argument, so API-key providers can declare that access is backed by a subscription rather than metered API pricing. `kimi-coding` (subscription-backed despite using an API key) now sets it ([#9](https://github.com/xhqing/pi-harness/issues/9)).
+
 ### Fixed
 
 - Test model references and the coding-agent defaults for the Xiaomi providers now use `mimo-v2.6-pro`, matching the refreshed upstream catalog (the previous `mimo-v2.5-pro` was dropped upstream) ([#30](https://github.com/xhqing/pi/issues/30)).

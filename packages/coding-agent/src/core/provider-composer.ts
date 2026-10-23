@@ -326,6 +326,7 @@ function composeApiKeyAuth(
 	const authHeader = extension?.authHeader ?? config?.authHeader ?? false;
 	return {
 		name: inherited?.name ?? "API key",
+		isSubscription: inherited?.isSubscription,
 		login:
 			inherited?.login ??
 			(async (interaction: AuthInteraction) => ({
