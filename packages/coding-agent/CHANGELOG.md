@@ -6,6 +6,8 @@
 
 - The footer marks API-key providers that declare `auth.apiKey.isSubscription` as subscription-backed (`$0.000 (sub)`), including extension-registered plans such as `volcengine-agent-plan`. The `kimi-coding` special case in the footer is gone — its built-in API-key auth now sets the flag itself ([#9](https://github.com/xhqing/pi-harness/issues/9)).
 
+- Availability refreshes now publish in publication order instead of start order: a pass publishes when it is newer than the last published pass and did not start before the last state change. Concurrent passes stop cancelling each other, so an awaited refresh always resolves with a snapshot at least as new as the pass it started. This removes the startup race where a fresh session occasionally ignored the configured `defaultProvider` / `defaultModel` and silently fell back to another provider's default model ([#11](https://github.com/xhqing/pi-harness/issues/11)).
+
 - The default model for `github-copilot` is now `gpt-6.1-sol`; the previous default (`gpt-5.4`) was removed by the upstream catalog refresh, which made the built-in-defaults test fail.
 
 ### Changed
