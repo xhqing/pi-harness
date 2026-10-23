@@ -6,6 +6,8 @@
 
 - Availability refreshes now publish in publication order instead of start order: a pass publishes when it is newer than the last published pass and did not start before the last state change. Concurrent passes stop cancelling each other, so an awaited refresh always resolves with a snapshot at least as new as the pass it started. This removes the startup race where a fresh session occasionally ignored the configured `defaultProvider` / `defaultModel` and silently fell back to another provider's default model ([#11](https://github.com/xhqing/pi-harness/issues/11)).
 
+- The default model for `github-copilot` is now `gpt-6.1-sol`; the previous default (`gpt-5.4`) was removed by the upstream catalog refresh, which made the built-in-defaults test fail.
+
 ### Changed
 
 - Repository renamed to `pi-harness` (`xhqing/pi` → `xhqing/pi-harness`): repository URLs in this package were updated — `FORK_RELEASES_URL` / `LATEST_VERSION_URL` (update check), fork-guidance messages, `repository.url` in `package.json`, and the related tests. Runtime identities (CLI name, config directory, environment variables, npm package name, release asset names) are unchanged. See the root `CHANGELOG.md` for details.
