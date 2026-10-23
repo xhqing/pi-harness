@@ -192,14 +192,18 @@ describe("builtin providers", () => {
 
 	it("uses official Kimi K3 pricing for Moonshot providers", () => {
 		const models = builtinModels();
-		for (const provider of ["moonshotai", "moonshotai-cn"]) {
-			expect(models.getModel(provider, "kimi-k3")?.cost).toEqual({
-				input: 3,
-				output: 15,
-				cacheRead: 0.3,
-				cacheWrite: 3,
-			});
-		}
+		expect(models.getModel("moonshotai", "kimi-k3")?.cost).toEqual({
+			input: 3,
+			output: 15,
+			cacheRead: 0.3,
+			cacheWrite: 3,
+		});
+		expect(models.getModel("moonshotai-cn", "kimi-k3")?.cost).toEqual({
+			input: 2.9879,
+			output: 14.9395,
+			cacheRead: 0.2988,
+			cacheWrite: 2.9879,
+		});
 	});
 
 	it("uses API-equivalent implied pricing for Kimi Coding subscription models", () => {
