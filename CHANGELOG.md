@@ -16,6 +16,10 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 ### Fixed
 
+- The footer now shows `(sub)` for API-key providers that declare subscription billing (`ApiKeyAuth.isSubscription`), so extension-registered plans no longer look like metered API pricing; the `kimi-coding` provider-name special case was removed in favor of the flag ([#9](https://github.com/xhqing/pi-harness/issues/9)).
+
+- `ModelRuntime` availability refreshes publish in publication order instead of start order (a pass only publishes when newer than the last published pass and not started before the last state change), so concurrent passes no longer cancel each other and an awaited refresh cannot return a stale snapshot. This fixes the startup race that occasionally replaced the configured default model with a fallback model ([#11](https://github.com/xhqing/pi-harness/issues/11)).
+
 - Refreshed the stale model references in the `packages/ai` tests after the upstream catalog removed several IDs; CI's `tsgo --noEmit` step is green again. Runtime assertions that only fail with the refreshed data (pricing and thinking-level maps) were aligned in the same pass.
 
 - `packages/ai/test/zai-coding-plan-models.test.ts`: the GLM-4.6V China Coding Plan assertion now expects the refreshed upstream cache-read price (`cacheRead: 0.05`), which aligns the CI build (it hydrates `providers/data/*.json` from the upstream catalog at build time) and matches the upstream catalog-drift fix (earendil-works/pi `482c1381`). The assertion had pinned `cacheRead: 0`, so every CI run failed once upstream changed the value.

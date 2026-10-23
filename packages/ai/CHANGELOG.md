@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- `ApiKeyAuth` gained an optional `isSubscription` flag, and `envApiKeyAuth` accepts it as a third argument, so API-key providers can declare that access is backed by a subscription rather than metered API pricing. `kimi-coding` (subscription-backed despite using an API key) now sets it ([#9](https://github.com/xhqing/pi-harness/issues/9)).
+
 ### Fixed
 
 - Model-reference tests now use IDs that exist in the refreshed upstream catalog (`baseten` Kimi-K3, `github-copilot` `claude-opus-4.8` / `gpt-5.4-nano`, `openrouter` `deepseek/deepseek-r1-0528`, `together` `MiniMaxAI/MiniMax-M3`), restoring `tsgo --noEmit` in CI after upstream removed the previous IDs. The same pass aligned runtime assertions that only fail with the refreshed data: `moonshotai-cn` Kimi K3 pricing, the `kimi-coding` K3 `off` level, and the `grok-4.5` / `grok-4.3` `xhigh` levels.

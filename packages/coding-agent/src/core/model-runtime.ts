@@ -471,7 +471,11 @@ export class ModelRuntime implements Models {
 	}
 
 	isUsingSubscription(providerId: string): boolean {
-		return this.isUsingOAuth(providerId) && this.models.getProvider(providerId)?.auth.oauth?.isSubscription === true;
+		const auth = this.models.getProvider(providerId)?.auth;
+		const authType = this.snapshot.auth.get(providerId)?.type;
+		if (authType === "oauth") return auth?.oauth?.isSubscription === true;
+		if (authType === "api_key") return auth?.apiKey?.isSubscription === true;
+		return false;
 	}
 
 	hasConfiguredAuth(providerId: string): boolean {

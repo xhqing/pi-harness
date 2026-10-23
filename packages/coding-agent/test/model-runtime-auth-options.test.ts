@@ -1,4 +1,4 @@
-import { type AuthType, type CredentialStore, InMemoryCredentialStore } from "@earendil-works/pi-ai";
+import { type AuthType, type CredentialStore, InMemoryCredentialStore, type Provider } from "@earendil-works/pi-ai";
 import { describe, expect, it } from "vitest";
 import { AuthStorage } from "../src/core/auth-storage.ts";
 import { ModelRuntime } from "../src/core/model-runtime.ts";
@@ -29,6 +29,42 @@ function testModel(id: string) {
 		cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
 		contextWindow: 10000,
 		maxTokens: 1000,
+	};
+}
+
+function subscriptionModel(providerId: string) {
+	return {
+		id: "subscription-model",
+		name: "Subscription Model",
+		api: "openai-completions" as const,
+		provider: providerId,
+		baseUrl: "https://example.test/v1",
+		reasoning: false,
+		input: ["text"] as ("text" | "image")[],
+		cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+		contextWindow: 10000,
+		maxTokens: 1000,
+	};
+}
+
+function apiKeyProvider(id: string, isSubscription?: boolean): Provider<"openai-completions"> {
+	return {
+		id,
+		name: id,
+		auth: {
+			apiKey: {
+				name: "API key",
+				...(isSubscription === undefined ? {} : { isSubscription }),
+				resolve: async () => ({ auth: { apiKey: "key" }, source: "stored" }),
+			},
+		},
+		getModels: () => [subscriptionModel(id)],
+		stream: () => {
+			throw new Error("unused");
+		},
+		streamSimple: () => {
+			throw new Error("unused");
+		},
 	};
 }
 
@@ -322,5 +358,31 @@ describe("ModelRuntime auth options", () => {
 			provider: { id: "extension-oauth", name: "Extension OAuth" },
 			method: { name: "Extension subscription", isSubscription: true },
 		});
+	});
+
+	it("treats an API-key provider marked as a subscription as a subscription", async () => {
+		const credentials = AuthStorage.inMemory({
+			"plan-provider": { type: "api_key", key: "key" },
+		});
+		const runtime = await ModelRuntime.create({ credentials, modelsPath: null, allowModelNetwork: false });
+		runtime.registerNativeProvider(apiKeyProvider("plan-provider", true));
+		await runtime.refresh({ allowNetwork: false });
+
+		expect(runtime.hasConfiguredAuth("plan-provider")).toBe(true);
+		expect(runtime.isUsingOAuth("plan-provider")).toBe(false);
+		expect(runtime.isUsingSubscription("plan-provider")).toBe(true);
+	});
+
+	it("does not treat an unmarked API-key provider as a subscription", async () => {
+		const credentials = AuthStorage.inMemory({
+			"plain-provider": { type: "api_key", key: "key" },
+		});
+		const runtime = await ModelRuntime.create({ credentials, modelsPath: null, allowModelNetwork: false });
+		runtime.registerNativeProvider(apiKeyProvider("plain-provider"));
+		await runtime.refresh({ allowNetwork: false });
+
+		expect(runtime.hasConfiguredAuth("plain-provider")).toBe(true);
+		expect(runtime.isUsingOAuth("plain-provider")).toBe(false);
+		expect(runtime.isUsingSubscription("plain-provider")).toBe(false);
 	});
 });
