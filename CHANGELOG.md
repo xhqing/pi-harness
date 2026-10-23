@@ -4,6 +4,10 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 ## [Unreleased]
 
+### Fixed
+
+- `ModelRuntime` availability refreshes publish in publication order instead of start order (a pass only publishes when newer than the last published pass and not started before the last state change), so concurrent passes no longer cancel each other and an awaited refresh cannot return a stale snapshot. This fixes the startup race that occasionally replaced the configured default model with a fallback model ([#11](https://github.com/xhqing/pi-harness/issues/11)).
+
 ### Changed
 
 - **Repository renamed to `pi-harness`** (2026-10-18): the GitHub repository is now `xhqing/pi-harness` (renamed from `xhqing/pi`; old links redirect automatically), to set the fork apart from the upstream `earendil-works/pi` project. All repository URLs inside the repo were updated to the new name — README titles/badges/links (both languages), the LICENSE note, `FORK_RELEASES_URL` / `LATEST_VERSION_URL` in the update check and their tests, fork guidance in `package-manager-cli.ts` / `config.ts` / `interactive-mode.ts`, `DEVELOPMENT.md` / `MEMO.md` references, and the `repository.url` field of every workspace package (which still pointed at the upstream repo). Runtime identities are intentionally unchanged: the `pi` CLI command, the `.pi` config directory, `PI_*` environment variables, npm package names (`@earendil-works/*` scope), and release asset names (`pi-coding-agent-<version>.tgz`) stay as they are.
