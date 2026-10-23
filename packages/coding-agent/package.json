@@ -1,6 +1,6 @@
 {
 	"name": "pi-coding-agent",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "Coding agent CLI with read, bash, edit, write tools and session management",
 	"type": "module",
 	"piConfig": {
@@ -49,10 +49,10 @@
 		"prepublishOnly": "npm run clean && npm run build && npm run shrinkwrap"
 	},
 	"dependencies": {
-		"chord": "^0.0.6",
-		"pi-agent-core": "^0.0.6",
-		"pi-ai": "^0.0.6",
-		"pi-tui": "^0.0.6",
+		"chord": "^0.0.7",
+		"pi-agent-core": "^0.0.7",
+		"pi-ai": "^0.0.7",
+		"pi-tui": "^0.0.7",
 		"@silvia-odwyer/photon-node": "0.3.4",
 		"chalk": "6.0.0",
 		"cross-spawn": "7.0.6",
@@ -73,9 +73,9 @@
 		"protobufjs": "7.6.6"
 	},
 	"devDependencies": {
-		"pi-client": "^0.0.6",
-		"pi-protocol": "^0.0.6",
-		"pi-server": "^0.0.6",
+		"pi-client": "^0.0.7",
+		"pi-protocol": "^0.0.7",
+		"pi-server": "^0.0.7",
 		"@types/cross-spawn": "6.0.6",
 		"@types/hosted-git-info": "3.0.5",
 		"@types/node": "22.19.19",

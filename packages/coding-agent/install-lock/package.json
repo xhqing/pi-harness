@@ -1,10 +1,10 @@
 {
 	"name": "pi-coding-agent-install",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"private": true,
 	"description": "Lockfile root used by the Pi installer and updater.",
 	"dependencies": {
-		"pi-coding-agent": "0.0.6"
+		"pi-coding-agent": "0.0.7"
 	},
 	"overrides": {
 		"protobufjs": "7.6.6"
