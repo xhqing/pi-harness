@@ -41,6 +41,58 @@ Pi enables enhanced key reporting when available. If Terminal.app still sends pl
 
 This fallback only works when pi runs on the same Mac as Terminal.app. It cannot detect the local keyboard over remote SSH.
 
+## Selecting all text (Cmd+A)
+
+On macOS, terminals intercept `Cmd+A` for their own "select all" and never send it to pi. Pi binds `tui.editor.selectAll` to `super+a`, but the terminal has to pass the key through (pi already enables the Kitty keyboard protocol). The examples below send the CSI-u encoding for `super+a` (`\x1b[97;9u`); a plain "unbind" also works when the terminal encodes the modifier through the Kitty protocol.
+
+If you would rather not touch the terminal configuration, rebind the action in `~/.pi/agent/keybindings.json` to a key your terminal forwards, for example:
+
+```json
+{
+  "tui.editor.selectAll": "ctrl+shift+a"
+}
+```
+
+### Ghostty
+
+```
+# Option 1: remove Ghostty's own Cmd+A binding so the key reaches pi
+keybind = super+a=unbind
+
+# Option 2: send the CSI-u encoding explicitly
+keybind = super+a=csi:97;9u
+```
+
+### iTerm2
+
+Open **Settings → Profiles → Keys → Key Mappings**, add `Cmd+A`, and choose **Send Hex Codes** with `1b 5b 39 37 3b 39 75`.
+
+### kitty
+
+```
+map super+a send_text all \x1b[97;9u
+```
+
+### WezTerm
+
+```lua
+config.keys = {
+  { key = "a", mods = "SUPER", action = wezterm.action.SendString "\x1b[97;9u" },
+}
+```
+
+### Apple Terminal
+
+Terminal.app does not let applications receive `Cmd+A`; rebind `tui.editor.selectAll` in `~/.pi/agent/keybindings.json` (shown above) instead.
+
+### VS Code integrated terminal
+
+VS Code uses `Cmd+A` for `workbench.action.terminal.selectAll`. Add this to your VS Code `keybindings.json` to let the key reach the terminal process:
+
+```json
+{ "key": "cmd+a", "command": "-workbench.action.terminal.selectAll" }
+```
+
 ## Ghostty
 
 Add to your Ghostty config (`~/Library/Application Support/com.mitchellh.ghostty/config` on macOS, `~/.config/ghostty/config` on Linux):
