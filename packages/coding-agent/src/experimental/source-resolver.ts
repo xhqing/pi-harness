@@ -26,8 +26,28 @@ const tsconfig = JSON.parse(readFileSync(tsconfigPath, "utf8")) as TsConfig;
 const paths = tsconfig.compilerOptions?.paths;
 if (!paths) throw new Error(`Source runtime requires compilerOptions.paths in ${tsconfigPath}`);
 
+const INTERNAL_PACKAGE_NAMES = new Set([
+	"chord",
+	"pi-agent-core",
+	"pi-agent-old",
+	"pi-ai",
+	"pi-client",
+	"pi-coding-agent",
+	"pi-durable",
+	"pi-protocol",
+	"pi-server",
+	"pi-session-backend-sqlite-node",
+	"pi-telemetry",
+	"pi-tui",
+]);
+
+function isInternalPackageAlias(pattern: string): boolean {
+	const [name] = pattern.split("/");
+	return INTERNAL_PACKAGE_NAMES.has(name);
+}
+
 const aliases: SourceAlias[] = Object.entries(paths)
-	.filter(([pattern]) => pattern !== "typebox")
+	.filter(([pattern]) => isInternalPackageAlias(pattern))
 	.map(([pattern, replacements]) => {
 		const wildcard = pattern.indexOf("*");
 		if (wildcard !== -1 && pattern.indexOf("*", wildcard + 1) !== -1) {
