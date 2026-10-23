@@ -4,6 +4,8 @@
 
 ### Fixed
 
+- Model-reference tests now use IDs that exist in the refreshed upstream catalog (`baseten` Kimi-K3, `github-copilot` `claude-opus-4.8` / `gpt-5.4-nano`, `openrouter` `deepseek/deepseek-r1-0528`, `together` `MiniMaxAI/MiniMax-M3`), restoring `tsgo --noEmit` in CI after upstream removed the previous IDs. The same pass aligned runtime assertions that only fail with the refreshed data: `moonshotai-cn` Kimi K3 pricing, the `kimi-coding` K3 `off` level, and the `grok-4.5` / `grok-4.3` `xhigh` levels.
+
 - Test model references and the coding-agent defaults for the Xiaomi providers now use `mimo-v2.6-pro`, matching the refreshed upstream catalog (the previous `mimo-v2.5-pro` was dropped upstream) ([#30](https://github.com/xhqing/pi/issues/30)).
 
 - `test/zai-coding-plan-models.test.ts`: the GLM-4.6V assertion now expects `cacheRead: 0.05`, aligning with the refreshed upstream catalog (upstream fixed the same assertion in earendil-works/pi `482c1381`). The CI build hydrates `providers/data/*.json` from the upstream catalog, so asserted values must match the current upstream data.
