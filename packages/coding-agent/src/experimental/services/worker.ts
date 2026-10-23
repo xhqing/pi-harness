@@ -10,8 +10,8 @@ import {
 	type RemoteServiceEndpoint,
 	type ServiceCall,
 	type ServiceProviderUpdate,
-} from "@earendil-works/chord";
-import type { AgentHarness, AgentLane } from "@earendil-works/pi-agent-core";
+} from "chord";
+import type { AgentHarness, AgentLane } from "pi-agent-core";
 import type { ModelRuntime } from "../../core/model-runtime.ts";
 import type { SettingsManager } from "../../core/settings-manager.ts";
 import { AgentController } from "./agent-controller.ts";

@@ -1,5 +1,5 @@
-import type { Context } from "@earendil-works/chord";
-import type { ToolCall } from "@earendil-works/pi-ai";
+import type { Context } from "chord";
+import type { ToolCall } from "pi-ai";
 import type { TSchema } from "typebox";
 import { Errors } from "typebox/value";
 import { Bounded } from "../bounded.ts";

@@ -1,11 +1,4 @@
-import {
-	type Api,
-	type ImageContent,
-	type Model,
-	type Models,
-	reduceAssistantMessageFrames,
-	type Usage,
-} from "@earendil-works/pi-ai";
+import { type Api, type ImageContent, type Model, type Models, reduceAssistantMessageFrames, type Usage } from "pi-ai";
 import type { AgentMessage, ThinkingLevel } from "../../types.ts";
 import type {
 	AbortRequestResult,

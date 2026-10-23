@@ -33,10 +33,10 @@ const nativePrebuilds = [
 // Workspace packages inlined into the bundle; not published to npm under this
 // fork's version line, so they must not appear as installable dependencies.
 const inlinedWorkspacePackages = [
-	"@earendil-works/chord",
-	"@earendil-works/pi-agent-core",
-	"@earendil-works/pi-ai",
-	"@earendil-works/pi-tui",
+	"chord",
+	"pi-agent-core",
+	"pi-ai",
+	"pi-tui",
 ];
 
 function parseArgs() {

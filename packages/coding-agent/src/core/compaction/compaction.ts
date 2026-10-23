@@ -5,7 +5,7 @@
  * and after compaction the session is reloaded.
  */
 
-import type { AgentMessage, StreamFn, ThinkingLevel } from "@earendil-works/pi-agent-core";
+import type { AgentMessage, StreamFn, ThinkingLevel } from "pi-agent-core";
 import {
 	contentText,
 	normalizeContext,
@@ -13,15 +13,9 @@ import {
 	type RetryPolicy,
 	retryAssistantCall,
 	uuidv7,
-} from "@earendil-works/pi-ai";
-import type {
-	AssistantMessage,
-	Model,
-	SimpleStreamOptions,
-	TranscriptContext,
-	Usage,
-} from "@earendil-works/pi-ai/compat";
-import { completeSimple } from "@earendil-works/pi-ai/compat";
+} from "pi-ai";
+import type { AssistantMessage, Model, SimpleStreamOptions, TranscriptContext, Usage } from "pi-ai/compat";
+import { completeSimple } from "pi-ai/compat";
 import { convertToLlm } from "../messages.ts";
 import {
 	buildSessionContext,

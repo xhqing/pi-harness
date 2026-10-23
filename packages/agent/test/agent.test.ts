@@ -5,7 +5,7 @@ import {
 	getCurrentSystemMessage,
 	getModel,
 	toToolDeclaration,
-} from "@earendil-works/pi-ai/compat";
+} from "pi-ai/compat";
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
 import {

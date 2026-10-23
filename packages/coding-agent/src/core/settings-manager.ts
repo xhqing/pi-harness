@@ -1,14 +1,9 @@
-import type { ThinkingLevel } from "@earendil-works/pi-agent-core";
-import { DEFAULT_MAX_AGENT_RETRY_DELAY_MS, type Model, type Transport } from "@earendil-works/pi-ai";
-import type {
-	CursorStyle,
-	TuiMode as RendererTuiMode,
-	ScrollViewScrollbar,
-	TerminalCapabilities,
-} from "@earendil-works/pi-tui";
 import { randomUUID } from "crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
+import type { ThinkingLevel } from "pi-agent-core";
+import { DEFAULT_MAX_AGENT_RETRY_DELAY_MS, type Model, type Transport } from "pi-ai";
+import type { CursorStyle, TuiMode as RendererTuiMode, ScrollViewScrollbar, TerminalCapabilities } from "pi-tui";
 import lockfile from "proper-lockfile";
 import { CONFIG_DIR_NAME, getAgentDir } from "../config.ts";
 import { normalizePath, resolvePath } from "../utils/paths.ts";

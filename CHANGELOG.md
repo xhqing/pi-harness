@@ -4,13 +4,17 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 ## [Unreleased]
 
+### Breaking Changes
+
+- Workspace package names dropped the `@earendil-works/` scope: `@earendil-works/pi-coding-agent` → `pi-coding-agent`, `@earendil-works/pi-ai` → `pi-ai`, `@earendil-works/pi-tui` → `pi-tui`, and the rest of the monorepo follows the same pattern ([#12](https://github.com/xhqing/pi-harness/issues/12)). Distribution stays on GitHub Releases (self-contained tarball and binaries); the unscoped names on the public npm registry are placeholder packages held by upstream, so the fork does not publish there. The `pi` command, `.pi` config directory, `PI_*` environment variables, and release asset names are unchanged.
+
 ### Added
 
 - The editor now supports select-all (`super+a`, Cmd+A). With everything selected, `backspace` / `delete` clears the editor, typing a character replaces the whole text, and cursor movement, mouse clicks, or `escape` cancel the selection. macOS terminals intercept `Cmd+A` by default, so `docs/keybindings.md` and `docs/terminal-setup.md` document the pass-through configuration (Ghostty, iTerm2, kitty, WezTerm, VS Code) and the `tui.editor.selectAll` rebind fallback ([#10](https://github.com/xhqing/pi-harness/issues/10)).
 
 ### Changed
 
-- **Repository renamed to `pi-harness`** (2026-10-18): the GitHub repository is now `xhqing/pi-harness` (renamed from `xhqing/pi`; old links redirect automatically), to set the fork apart from the upstream `earendil-works/pi` project. All repository URLs inside the repo were updated to the new name — README titles/badges/links (both languages), the LICENSE note, `FORK_RELEASES_URL` / `LATEST_VERSION_URL` in the update check and their tests, fork guidance in `package-manager-cli.ts` / `config.ts` / `interactive-mode.ts`, `DEVELOPMENT.md` / `MEMO.md` references, and the `repository.url` field of every workspace package (which still pointed at the upstream repo). Runtime identities are intentionally unchanged: the `pi` CLI command, the `.pi` config directory, `PI_*` environment variables, npm package names (`@earendil-works/*` scope), and release asset names (`pi-coding-agent-<version>.tgz`) stay as they are.
+- **Repository renamed to `pi-harness`** (2026-10-18): the GitHub repository is now `xhqing/pi-harness` (renamed from `xhqing/pi`; old links redirect automatically), to set the fork apart from the upstream `earendil-works/pi` project. All repository URLs inside the repo were updated to the new name — README titles/badges/links (both languages), the LICENSE note, `FORK_RELEASES_URL` / `LATEST_VERSION_URL` in the update check and their tests, fork guidance in `package-manager-cli.ts` / `config.ts` / `interactive-mode.ts`, `DEVELOPMENT.md` / `MEMO.md` references, and the `repository.url` field of every workspace package (which still pointed at the upstream repo). Runtime identities are intentionally unchanged: the `pi` CLI command, the `.pi` config directory, `PI_*` environment variables, release asset names (`pi-coding-agent-<version>.tgz`) stay as they are. (The npm package names were unscoped separately on 2026-10-23, see below.)
 
 - Mount the Agent-presence symlinks (2026-10-17 user revision): added `AGENTS.md → ../FullStackEngineerAgent/AGENTS.md` and `.pi → ../FullStackEngineerAgent/.pi` as relative symlinks and committed them to the repository. Under the new rule, agent-exclusive file entities live only in the responsible Agent project, while sub-projects mount these links so that a session started in the sub-project inherits the responsible agent's identity, rules and skills; the links dangle harmlessly when the repository is cloned in isolation.
 
