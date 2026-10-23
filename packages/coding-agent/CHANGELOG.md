@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- The default model for `github-copilot` is now `gpt-6.1-sol`; the previous default (`gpt-5.4`) was removed by the upstream catalog refresh, which made the built-in-defaults test fail.
+
 ### Changed
 
 - `docs/keybindings.md` and `docs/terminal-setup.md` document the new editor select-all action (`tui.editor.selectAll`, Cmd+A): terminal pass-through configuration for Ghostty, iTerm2, kitty, WezTerm, and VS Code, plus the rebind fallback for terminals that cannot forward the key ([#10](https://github.com/xhqing/pi-harness/issues/10)).

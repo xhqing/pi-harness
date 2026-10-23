@@ -16,6 +16,8 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 ### Fixed
 
+- Refreshed the stale model references in the `packages/ai` tests after the upstream catalog removed several IDs; CI's `tsgo --noEmit` step is green again. Runtime assertions that only fail with the refreshed data (pricing and thinking-level maps) were aligned in the same pass.
+
 - `packages/ai/test/zai-coding-plan-models.test.ts`: the GLM-4.6V China Coding Plan assertion now expects the refreshed upstream cache-read price (`cacheRead: 0.05`), which aligns the CI build (it hydrates `providers/data/*.json` from the upstream catalog at build time) and matches the upstream catalog-drift fix (earendil-works/pi `482c1381`). The assertion had pinned `cacheRead: 0`, so every CI run failed once upstream changed the value.
 
 - `package-lock.json`: the root and workspace-root version fields are synced to `0.0.6` (they had drifted to `0.0.5` during the 0.0.6 version bump; `VERSION` and `package.json` were already `0.0.6`).
