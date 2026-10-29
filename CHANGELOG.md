@@ -2,6 +2,12 @@
 
 Root-level changelog and version baseline for the standalone fork. The root version tracks the `pi-monorepo` workspace root; per-package changes continue to be recorded in `packages/*/CHANGELOG.md`. This file was created on 2026-09-20, after the repository was detached from the earendil-works/pi fork network (2026-09-19), to give the now-independent repo a single root version authority.
 
+## [Unreleased]
+
+### Changed
+
+- **Sub-project `.pi` migrated from a symlink to a real directory with resource references** (2026-10-30 global rule revision). Why: the previous setup symlinked this repo's `.pi` wholesale to `~/Developer/FullStackEngineerAgent/.pi`, which conflated sharing with ownership — any file written into `.pi` here landed directly in the Agent project, polluting every sibling sub-project and showing up in that project's git history. Copying the resources instead was never an option either: `AGENTS.md` has no include mechanism, so a copy-based superset inevitably drifts from the Agent side. What changed: (1) the `.pi → ../FullStackEngineerAgent/.pi` symlink is gone, replaced by a real `.pi/` directory owned by this repo; (2) a new `.pi/settings.json` references the Agent project's `extensions` / `skills` / `prompts` / `themes` directories by path and keeps the same-named local directories (local resources are auto-discovered, so they need no settings entry); (3) the `AGENTS.md → ../FullStackEngineerAgent/AGENTS.md` symlink is unchanged, keeping the identity layer aligned rather than forked. Rule: this repo's `.pi/` is append-only (own resource directories, `.pi/APPEND_SYSTEM.md`); it must not restate or override the base rules, and project-specific rules go into `APPEND_SYSTEM.md` — never `SYSTEM.md`, which replaces the whole system prompt and would wipe out the agent identity. See `~/.pi/agent/docs/agents-registry.md`, section “智能体专属文件归属与子项目映射（2026-10-30 修订）”.
+
 ## [0.0.7] - 2026-10-23
 
 ### Breaking Changes
