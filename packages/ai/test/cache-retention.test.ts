@@ -495,8 +495,12 @@ describe("Cache Retention (PI_CACHE_RETENTION)", () => {
 			expect(capturedPayload.prompt_cache_retention).toBeUndefined();
 		});
 
+		// The opencode catalog is generated from the provider's live API by `npm run generate-models`
+		// and is not checked in, so it drifts upstream. This list must only contain models whose
+		// `compat.supportsLongCacheRetention` is false: when an id here is renamed or retired, drop it
+		// from the list; to replace it, first confirm the new model also carries
+		// `compat.supportsLongCacheRetention: false`.
 		it.each([
-			MODELS.opencode["deepseek-v4-flash"],
 			MODELS.opencode["deepseek-v4-pro"],
 			MODELS.opencode["kimi-k2.5"],
 			MODELS.opencode["kimi-k2.6"],
