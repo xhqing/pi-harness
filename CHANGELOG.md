@@ -20,6 +20,8 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 ### Fixed
 
+- The long-cache-retention suite in `packages/ai` no longer references the retired `deepseek-v4-flash` model id: the `it.each` list that asserts long cache retention is omitted for models carrying `compat.supportsLongCacheRetention: false` now only lists ids that exist in the current catalog (`deepseek-v4-pro`, `kimi-k2.5`, `kimi-k2.6`, `minimax-m2.7`). The catalog is generated from the provider's live API at build time and is not checked in, so an upstream rename broke `tsgo --noEmit` on every PR (TS2551) — including PRs that do not touch `packages/ai`. Assertions are unchanged; a comment above the list records the rule for the next drift (drop a retired id, and only substitute a model that also carries the flag).
+
 - The footer now shows `(sub)` for API-key providers that declare subscription billing (`ApiKeyAuth.isSubscription`), so extension-registered plans no longer look like metered API pricing; the `kimi-coding` provider-name special case was removed in favor of the flag ([#9](https://github.com/xhqing/pi-harness/issues/9)).
 
 - `ModelRuntime` availability refreshes publish in publication order instead of start order (a pass only publishes when newer than the last published pass and not started before the last state change), so concurrent passes no longer cancel each other and an awaited refresh cannot return a stale snapshot. This fixes the startup race that occasionally replaced the configured default model with a fallback model ([#11](https://github.com/xhqing/pi-harness/issues/11)).
