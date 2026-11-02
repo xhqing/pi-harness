@@ -29,6 +29,18 @@ function stopAfterPayload<TPayload>(capture: (payload: TPayload) => void): (payl
 	};
 }
 
+type CatalogModel = { api: string; compat?: { supportsLongCacheRetention?: boolean } };
+
+/**
+ * Reads the per-API `compat` flag without narrowing the model's API: the catalog mixes several APIs,
+ * and only some of their compat shapes carry `supportsLongCacheRetention`. The api check matters
+ * because these cases drive `streamOpenAICompletions`: a model flagged on another API would be
+ * exercised through the wrong transport.
+ */
+function isCompletionsModelWithoutLongCacheRetention(model: CatalogModel): boolean {
+	return model.api === "openai-completions" && model.compat?.supportsLongCacheRetention === false;
+}
+
 describe("Cache Retention (PI_CACHE_RETENTION)", () => {
 	const originalEnv = process.env.PI_CACHE_RETENTION;
 
@@ -495,41 +507,54 @@ describe("Cache Retention (PI_CACHE_RETENTION)", () => {
 			expect(capturedPayload.prompt_cache_retention).toBeUndefined();
 		});
 
-		// The opencode catalog is generated from the provider's live API by `npm run generate-models`
-		// and is not checked in, so it drifts upstream. This list must only contain models whose
-		// `compat.supportsLongCacheRetention` is false: when an id here is renamed or retired, drop it
-		// from the list; to replace it, first confirm the new model also carries
-		// `compat.supportsLongCacheRetention: false`.
-		it.each([
-			MODELS.opencode["deepseek-v4-pro"],
-			MODELS.opencode["kimi-k2.5"],
-			MODELS.opencode["kimi-k2.6"],
-			MODELS.opencode["minimax-m2.7"],
-		] as const)("should omit long cache retention for $provider/$id", async (metadata) => {
-			const model = metadata as Model<"openai-completions">;
-			let capturedPayload: OpenAICompletionsCachePayload | undefined;
+		// The opencode catalog is generated at build time from the provider's live API by
+		// `npm run generate-models` and is not checked in, so model ids drift upstream: they get
+		// renamed, retired, or added. Hardcoding them here used to break compilation (TS2551) whenever
+		// that happened, and because `build-check-test` is a required check on main, a single drift
+		// froze every PR (issue #44). Derive the candidates from the catalog instead of naming models:
+		// `MODELS.opencode` is the flattened view of the per-API groups, and this case only covers
+		// models that opt out of long cache retention.
+		const opencodeModelsWithoutLongCacheRetention = Object.values(MODELS.opencode).filter(
+			isCompletionsModelWithoutLongCacheRetention,
+		);
 
-			try {
-				const s = streamOpenAICompletions(model, context, {
-					apiKey: "fake-key",
-					cacheRetention: "long",
-					sessionId: "session-opencode-long-cache-unsupported",
-					onPayload: stopAfterPayload<OpenAICompletionsCachePayload>((payload) => {
-						capturedPayload = payload;
-					}),
-				});
-
-				for await (const event of s) {
-					if (event.type === "error") break;
-				}
-			} catch {
-				// Expected to fail
-			}
-
-			expect(model.compat?.supportsLongCacheRetention).toBe(false);
-			expect(capturedPayload).toBeDefined();
-			expect(capturedPayload?.prompt_cache_key).toBeUndefined();
-			expect(capturedPayload?.prompt_cache_retention).toBeUndefined();
+		// Guard against a silently empty `it.each([])`: without this case, a catalog shape change or a
+		// missing compat flag would skip every case below and report a false green (issue #44).
+		it("should derive opencode models without long cache retention from the catalog", () => {
+			expect(
+				opencodeModelsWithoutLongCacheRetention.length,
+				"the opencode catalog must contain at least one openai-completions model with compat.supportsLongCacheRetention === false",
+			).toBeGreaterThan(0);
 		});
+
+		it.each(opencodeModelsWithoutLongCacheRetention)(
+			"should omit long cache retention for $provider/$id",
+			async (metadata) => {
+				const model = metadata as Model<"openai-completions">;
+				let capturedPayload: OpenAICompletionsCachePayload | undefined;
+
+				try {
+					const s = streamOpenAICompletions(model, context, {
+						apiKey: "fake-key",
+						cacheRetention: "long",
+						sessionId: "session-opencode-long-cache-unsupported",
+						onPayload: stopAfterPayload<OpenAICompletionsCachePayload>((payload) => {
+							capturedPayload = payload;
+						}),
+					});
+
+					for await (const event of s) {
+						if (event.type === "error") break;
+					}
+				} catch {
+					// Expected to fail
+				}
+
+				expect(model.compat?.supportsLongCacheRetention).toBe(false);
+				expect(capturedPayload).toBeDefined();
+				expect(capturedPayload?.prompt_cache_key).toBeUndefined();
+				expect(capturedPayload?.prompt_cache_retention).toBeUndefined();
+			},
+		);
 	});
 });
