@@ -22,6 +22,7 @@
 
 * [访问 pi.dev](https://pi.dev)（项目官网，含演示）
 * [阅读文档](https://pi.dev/docs/latest)，也可以直接让 agent 解释它自己
+* [读懂它的内部构造](ARCHITECTURE.md)（中文，通俗版核心架构说明）
 
 ## 全部包
 
