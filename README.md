@@ -22,6 +22,7 @@ To learn more about Pi:
 
 * [Visit pi.dev](https://pi.dev), the project website with demos
 * [Read the documentation](https://pi.dev/docs/latest), but you can also ask the agent to explain itself
+* [Read the architecture guide](ARCHITECTURE.md) (in Chinese), a plain-language tour of how pi is put together
 
 ## All Packages
 
