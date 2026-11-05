@@ -222,6 +222,7 @@ Built-in tools: `read`, `bash`, `powershell` (Windows), `edit`, `write`, `grep`,
 |--------|-------------|
 | `-e`, `--extension <source>` | Load an extension from path, npm, or git; repeatable |
 | `--no-extensions` | Disable extension discovery |
+| `--strict-extensions` | Exit when an extension fails to load (default: skip it, warn, keep running) |
 | `--skill <path>` | Load a skill; repeatable |
 | `--no-skills` | Disable skill discovery |
 | `--prompt-template <path>` | Load a prompt template; repeatable |

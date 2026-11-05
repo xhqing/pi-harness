@@ -593,6 +593,7 @@ Available built-in tools: `read`, `bash`, `powershell` (Windows), `edit`, `write
 |--------|-------------|
 | `-e`, `--extension <source>` | Load extension from path, npm, or git (repeatable) |
 | `--no-extensions` | Disable extension discovery |
+| `--strict-extensions` | Exit when an extension fails to load (default: skip it, warn, keep running) |
 | `--skill <path>` | Load skill (repeatable) |
 | `--no-skills` | Disable skill discovery |
 | `--prompt-template <path>` | Load prompt template (repeatable) |
