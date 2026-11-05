@@ -25,6 +25,15 @@ import { SettingsManager } from "./settings-manager.ts";
 export interface AgentSessionRuntimeDiagnostic {
 	type: "info" | "warning" | "error";
 	message: string;
+	/**
+	 * Set when the diagnostic reports an extension that failed to load.
+	 *
+	 * The extension was skipped, everything else still works, so this is not a
+	 * fatal startup error: the app layer keeps running and lets the user decide
+	 * (`--strict-extensions` restores exit-on-error). Without this flag, a single
+	 * broken optional extension would take down the whole CLI (#49).
+	 */
+	extensionLoadFailure?: boolean;
 }
 
 /**

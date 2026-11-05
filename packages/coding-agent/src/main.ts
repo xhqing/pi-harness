@@ -780,6 +780,7 @@ export async function main(args: string[], options?: MainOptions) {
 			...collectSettingsDiagnostics(settingsManager),
 			...resourceLoader.getExtensions().errors.map(({ path, error }) => ({
 				type: "error" as const,
+				extensionLoadFailure: true,
 				message: `Failed to load extension "${path}": ${error}`,
 			})),
 		];
@@ -893,14 +894,29 @@ export async function main(args: string[], options?: MainOptions) {
 
 	time("resolveModelScope");
 	const startupDiagnostics = deduplicateDiagnostics([...startupSettingsDiagnostics, ...runtime.diagnostics]);
-	const hasRuntimeErrors = runtime.diagnostics.some((diagnostic) => diagnostic.type === "error");
+	// An extension that fails to load is skipped by the resource loader; the rest of
+	// the session is unaffected. Treating that as fatal used to brick the whole CLI
+	// over one broken optional plugin (#49), so it only aborts startup when the user
+	// asks for the old behavior with --strict-extensions.
+	const extensionLoadFailures = runtime.diagnostics.filter((diagnostic) => diagnostic.extensionLoadFailure === true);
+	const fatalRuntimeErrors = runtime.diagnostics.filter(
+		(diagnostic) => diagnostic.type === "error" && diagnostic.extensionLoadFailure !== true,
+	);
+	const strictExtensionFailure = parsed.strictExtensions === true && extensionLoadFailures.length > 0;
+	const hasRuntimeErrors = fatalRuntimeErrors.length > 0 || strictExtensionFailure;
 	if (appMode !== "interactive" || hasRuntimeErrors) {
 		reportDiagnostics(startupDiagnostics);
 	}
-	if (hasRuntimeErrors) {
-		if (runtime.diagnostics.some((diagnostic) => diagnostic.message.includes("Failed to load extension"))) {
+	if (extensionLoadFailures.length > 0) {
+		if (appMode === "interactive" && !hasRuntimeErrors) {
+			// The TUI already printed the diagnostics above; add the escape hatch as a
+			// status line instead of writing to stderr inside the alternate screen.
+			startupDiagnostics.push({ type: "info", message: EXTENSION_LOAD_FAILURE_HINT });
+		} else {
 			console.error(chalk.yellow(EXTENSION_LOAD_FAILURE_HINT));
 		}
+	}
+	if (hasRuntimeErrors) {
 		process.exit(1);
 	}
 	time("createAgentSession");
