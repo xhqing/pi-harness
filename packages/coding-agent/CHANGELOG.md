@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.8] - 2026-11-05
+
+### Fixed
+
+- A failing extension no longer aborts startup: extension load failures are reported with the file path and the `-ne` hint, the broken extension is skipped (the healthy ones keep loading), and the session runs; `--strict-extensions` restores the previous exit-on-error behavior ([#49](https://github.com/xhqing/pi-harness/issues/49)).
+
 ## [0.0.7] - 2026-10-23
 
 ### Breaking Changes
