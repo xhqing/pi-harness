@@ -6,6 +6,11 @@
 
 ### 发布与版本检查
 
+- [ ] **T8** `Build Binaries` 工作流在本 fork 上必然失败：`publish-npm` 无权限发布（404）后 `cleanup-draft-github-release` 会删掉已暂存的 draft，导致 CI 驱动的发版永远出不来（记录：2026-11-05 17:20）
+  **背景**：v0.0.8 实跑（run 41995780660）—— build / 三平台 smoke / stage 全绿、11 个 assets 已上传 draft，随后 `publish-npm` 因 fork 不拥有 npm 上的无 scope 包名而 404 失败，清理 job 随即删除 draft，`publish-github-release` 被跳过。该轮 Release 是手工从 Actions artifact 下载 `release-assets-v0.0.8` 再逐个 upload、翻成 published 救回来的。另有一处附带问题：`scripts/release-notes.mjs extract` 只取到 `packages/coding-agent` 的条目，v0.0.8 的 notes 最终手工取自根 `CHANGELOG.md`。需求单：https://github.com/xhqing/pi-harness/issues/52
+  **要做什么**：① 去掉 `publish-npm` job（或改用仓库变量门控，将来真拿到包名再开），并保证它的缺席不算失败；② `cleanup-draft-github-release` 只在 build / smoke / 上传真失败时触发，别因可选 npm 步骤删 draft；③ `release-notes.mjs extract` 回落到根 `CHANGELOG.md` 的版本段（或合并各包段落），避免 notes 只剩一个包。
+  **关联**：Issue #52；本条修复前，每次 CI 发版都要走「下载 artifact → 逐个 upload → 翻 published」的手工恢复流程。
+
 - [ ] **T7** `scripts/release.mjs` 第 10 步会直推 `main`，在 `main` 已锁保护后必然被拒——若将来启用该脚本，必须先改成「bump 分支 + PR」（记录：2026-11-02 17:45）
   **背景**：该脚本是从上游 `earendil-works/pi` 继承来的发布脚本（`npm run release:patch|minor|major`），第 10 步是 `git push origin main` 加 `git push origin v<version>`。本 fork 目前**没有在用**它——main 最近的发布都是「bump PR + tag」（如 `chore: bump version to 0.0.7 (#40)`），不是脚本产生的 `Release vX` 直接提交，所以现在没有实际冲突。但 2026-11-02 起 `main` 已开分支保护（PR 必过 + `strict` + 禁 force push + 线性历史 + 只允许 squash），脚本那一步的 `git push origin main` 会被 GitHub 直接拒（`GH006: Protected branch update failed`），而且脚本第 7、9 步会在 main 上直接产生两个提交（`Release vX` 与「Add [Unreleased] section」），与「一切经 PR」冲突。
   **要做什么（真要用它时）**：把第 7–10 步改成——在 `release/v<version>` 分支上做那两个提交并打版本 tag → 推该分支 → 开 PR（目标 main）→ 用 gh 的 auto-merge 启用 squash 自动合并 → 等合并后再推版本 tag（指向合并后的提交）；或者干脆走本机的 `/bump` → `/release` 链、不再维护这个脚本。**在改之前不要用它发版**。
