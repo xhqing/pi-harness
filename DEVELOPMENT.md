@@ -2,7 +2,9 @@
 
 ## 负责工程师：Atlas
 
-本项目由 **Atlas**（FullStackEngineerAgent，用户的全栈开发工程师）负责维护。Atlas 负责本项目的全部开发工作——功能分叉开发、个人定制、构建发布流水线等（2026-09-19 起本仓库已在 GitHub 断开与原上游 earendil-works/pi 的 fork 关系，此后独立演进、不再做上游同步）。在本项目内的开发 / 维护需求，由 Atlas 统一处理（Atlas 的角色定义与工作原则见 FullStackEngineerAgent 项目的根 `CLAUDE.md`）。
+本项目由 **Atlas**（FullStackEngineerAgent，用户的全栈开发工程师）负责维护。Atlas 负责本项目的全部开发工作——功能分叉开发、个人定制、构建发布流水线等（2026-09-19 起本仓库已在 GitHub 断开与原上游 earendil-works/pi 的 fork 关系，此后独立演进、不再做上游同步）。在本项目内的开发 / 维护需求，由 Atlas 统一处理（Atlas 的角色定义与工作原则见 FullStackEngineerAgent 项目的根 `AGENTS.md`）。
+
+具体任务由 Atlas 派的 **Worker 会话**在本项目的 worktree 里执行：Worker 负责改代码 / 跑测试 / 提交 / 开 PR，Atlas（Leader）负责 local main 同步、建 worktree、收尾清理与向用户汇报。本项目要 Worker 遵守的硬约束（Git 并发纪律、检查命令、依赖安全、CHANGELOG 规则等）写在 `.pi/APPEND_SYSTEM.md`（会话启动自动加载），本文件负责详细说明。
 
 pi-harness 是 Pi agent harness 的独立分叉仓库（origin 为 xhqing/pi-harness；2026-09-19 起在 GitHub 断开与原上游 earendil-works/pi 的 fork 关系，此后自主演进、不再同步上游），TypeScript monorepo：`packages/coding-agent`（交互式 coding agent CLI，TUI）、`packages/agent`（agent 运行时：工具调用与状态管理）、`packages/ai`（统一多供应商 LLM API）、`packages/tui`（TUI 组件库）等。本文件下方的「Development Rules」一节源自上游 earendil-works/pi 的根 `AGENTS.md`：先于 2026-09-19 本地删减（剔除与全局 `~/.claude/CLAUDE.md` 冲突的条目：简短回复风格、`git add` 显式路径、宽 commit 授权、临时脚本位置、非 main 分支不记 CHANGELOG），再于 2026-09-19 迁移并入本文件并删除原 `AGENTS.md`；迁移时未收录 Releasing 一节——其指向的 `.pi/skills/release.md` 已在本 fork 删除（悬空引用），且本项目发布走全局 `/release` skill，按用户指示剔除。pi 的上下文文件按 `AGENTS.override.md` > `AGENTS.md` > `CLAUDE.md` 顺序每目录只加载第一个命中的文件，删除 `AGENTS.md` 后本文件即接续生效。仓库已不再同步上游，「Development Rules」一节此后仅由本仓库自主维护；该节中标注「本地增补」的小节同样自主维护。
 
