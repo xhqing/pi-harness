@@ -82,7 +82,7 @@ We treat npm dependency changes as reviewed code changes.
 
 MIT License — see [LICENSE.md](LICENSE.md).
 
-Copyright (c) 2025 Mario Zechner (original Pi project). Copyright (c) 2026 All Contributors (this fork).
+Copyright (c) 2025 Mario Zechner (original Pi project). Copyright (c) 2026 xhqing <https://github.com/xhqing> (this fork).
 
 Portions of this repository originate from [earendil-works/pi](https://github.com/earendil-works/pi), detached on 2026-09-19; those portions retain their original copyright and MIT notice.
 
