@@ -168,8 +168,26 @@ describe("Fireworks models", () => {
 		expect(getSupportedThinkingLevels(getModel("fireworks", modelId))).toEqual(levels);
 	});
 
+	// Synthesized instead of looked up from the catalog: the model that used to
+	// cover this path (`accounts/fireworks/models/inkling`) was retired upstream,
+	// and because the catalog is regenerated from models.dev at build time, the
+	// hard-coded id turned the whole suite into a compile error overnight (the id
+	// is part of the `ModelId` union). The behaviour under test — a Messages model
+	// that does not opt into adaptive thinking falls back to a token budget — is
+	// driven purely by `compat`, so it needs no live catalog entry.
 	it("keeps toggle-only Messages models without a verified fallback on budget-based thinking", async () => {
-		const model = getModel("fireworks", "accounts/fireworks/models/inkling");
+		const model: Model<"anthropic-messages"> = {
+			id: "accounts/fireworks/models/toggle-only-placeholder",
+			name: "Fireworks Toggle-Only Placeholder",
+			api: "anthropic-messages",
+			provider: "fireworks",
+			baseUrl: "http://127.0.0.1:9",
+			reasoning: true,
+			input: ["text"],
+			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+			contextWindow: 128000,
+			maxTokens: 32768,
+		};
 		expect(model.compat?.forceAdaptiveThinking).toBeUndefined();
 		let payload: Record<string, unknown> | undefined;
 		await streamSimple(
