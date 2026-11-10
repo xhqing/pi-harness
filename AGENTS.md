@@ -1,12 +1,12 @@
 # pi-harness
 
-> FullStackEngineerAgent（Atlas）名下的子项目 · 本项目规则本体
+> dev-agent（Atlas）名下的子项目 · 本项目规则本体
 
 Pi agent harness 的独立分叉仓库（2026-09-19 起与上游断开 fork、自主演进）。TypeScript monorepo：`packages/coding-agent`（CLI / TUI）、`packages/agent`（运行时）、`packages/ai`（多供应商 LLM API）、`packages/tui`（组件库）。
 
 ## 归谁负责
 
-本项目由 **Atlas**（FullStackEngineerAgent）负责维护。改动范围跨出本项目时，先向 Atlas 说明，不自行扩张改动面。
+本项目由 **Atlas**（dev-agent）负责维护。改动范围跨出本项目时，先向 Atlas 说明，不自行扩张改动面。
 
 ## 你的角色
 
