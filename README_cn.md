@@ -82,7 +82,7 @@ npm run check         # Lint、格式化与类型检查
 
 MIT 许可证——见 [LICENSE.md](LICENSE.md)。
 
-Copyright (c) 2025 Mario Zechner（原 Pi 项目）。Copyright (c) 2026 All Contributors（本分叉）。
+Copyright (c) 2025 Mario Zechner（原 Pi 项目）。Copyright (c) 2026 xhqing <https://github.com/xhqing>（本分叉）。
 
 本仓库部分内容源自 [earendil-works/pi](https://github.com/earendil-works/pi)，于 2026-09-19 断开分叉；该部分内容保留原作者版权与 MIT 声明。
 
