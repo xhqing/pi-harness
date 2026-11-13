@@ -57,6 +57,15 @@ Pi agent harness 的独立分叉仓库（2026-09-19 起与上游 earendil-works/
 
 用 tmux 起受控终端测（详见项目 `DEVELOPMENT.md` 附录 interactive-testing 一节）：`tmux new-session -d -s pi-test -x 80 -y 24` → `./pi-test.sh` → `capture-pane` 看结果 → `kill-session`。发版冒烟测试要测 Node 与 Bun 两个二进制，**启动成功不算通过**，必须提交一次 prompt 并等到模型回复。
 
+## 测试文件对 Worker 只读（2026-11-13 立）
+
+测试由 **Leader（dev-agent / Atlas 的会话）在实现开工前**写好，以功能分支上的本地 commit 形式存在。你（Worker）对测试文件**只能读、只能运行**：
+
+- **禁止新建 / 修改 / 删除 / 移动**任何测试文件与测试基础设施：本项目的测试位置是 `packages/*/test/`、`scripts/*.test.mjs`（`*.test.ts`）；含 fixtures / helpers / conftest 等伴生文件（跑测试缺了也不自己补）。
+- **碰到测试跑不通、断言与 Issue 预期不符 → 终止开发、上报 Leader（`Atlas`）或用户裁决**，绝不改测试迁就实现——这是 LLM 的典型失败模式（改不动代码就放宽断言）。
+- **`# TEST_CASES_WRITE_OK` 标记的签发权在 Leader**，你不加；被 `test-cases-guard` 拦下时不要绕过。
+- 例外：测试运行自产的缓存与构建产物（`__pycache__`、`.pytest_cache`、coverage 输出、`out/` 等）可清理，走授权标记通道。
+
 ## 详细说明
 
 `DEVELOPMENT.md`（含完整开发规则与 add-llm-provider 清单）、`ARCHITECTURE.md`；通用工作规则见全局 `~/.pi/agent/AGENTS.md`。
