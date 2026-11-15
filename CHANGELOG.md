@@ -4,6 +4,10 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 ## [Unreleased]
 
+### Fixed
+
+- **Generated brand directories no longer count as workspace packages** ([#67](https://github.com/xhqing/pi-harness/issues/67), 2026-11-15). Why: `pi-alt` creates `packages/coding-agent/brands/pi-alt/package.json` at runtime, and `scripts/package-workspaces.mjs` walks every directory under `packages/` looking for manifests, so any version script (`npm run version:patch|minor|major`, `release:*`) failed with "Not all non-private packages have the same version" as soon as the repository had run `pi-alt` once. What changed: `brands` joined `dist` / `node_modules` in `SKIPPED_DIRECTORIES`, and a new `scripts/package-workspaces.test.mjs` pins the skip list while confirming that nested workspace packages (for example `coding-agent/examples/...`) are still discovered. Run by `npm run test:scripts`.
+
 ### Known risks
 
 - **`scripts/release.mjs` cannot push `main` any more.** The inherited release script commits on `main` and then runs `git push origin main` (step 10). `main` is now protected (pull requests required, `strict` status checks, no force pushes, linear history, squash-only), so that push is rejected with `GH006: Protected branch update failed`. The script is **not used** by this fork — releases go through a bump PR plus a tag (e.g. `chore: bump version to 0.0.7 (#40)`) — but anyone reaching for `npm run release:patch|minor|major` must first port it to a `release/v<version>` branch plus a pull request, or use the standard bump/release flow instead. Tracked as T7 in `TODO.md`.
