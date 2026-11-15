@@ -5,9 +5,10 @@ import {
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
-	readFileSync,
 	readdirSync,
+	readFileSync,
 	readlinkSync,
+	realpathSync,
 	rmSync,
 	symlinkSync,
 	writeFileSync,
@@ -87,7 +88,11 @@ function runNode(args: string[], options: { cwd?: string; env?: NodeJS.ProcessEn
  * generated brand state and proves the wrapper resolves paths from its own
  * location instead of the install prefix.
  */
-function createIsolatedInstall(): { root: string; wrapper: string; brandDir: string } {
+function createIsolatedInstall(): {
+	root: string;
+	wrapper: string;
+	brandDir: string;
+} {
 	const root = join(tempRoot, "install");
 	mkdirSync(join(root, "bin"), { recursive: true });
 	copyFileSync(join(packageRoot, "package.json"), join(root, "package.json"));
@@ -159,7 +164,10 @@ describe("pi-alt brand identity", () => {
 			};
 			expect(brandPackage.name).toBe(mainPackageJson.name);
 			expect(brandPackage.version).toBe(mainPackageJson.version);
-			expect(brandPackage.piConfig).toEqual({ name: "pi-alt", configDir: ".pi-alt" });
+			expect(brandPackage.piConfig).toEqual({
+				name: "pi-alt",
+				configDir: ".pi-alt",
+			});
 
 			for (const entry of BRAND_ENTRIES) {
 				const linkPath = join(brandDir, entry);
@@ -281,7 +289,11 @@ console.log(JSON.stringify({
 			expect(result.status).toBe(0);
 			const settingsPath = join(tempRoot, "home", ".pi-alt", "agent", "settings.json");
 			expect(existsSync(settingsPath)).toBe(true);
-			expect(readFileSync(settingsPath, "utf8")).toContain("brand-test-ext");
+			const settings = JSON.parse(readFileSync(settingsPath, "utf8")) as {
+				packages?: string[];
+			};
+			expect(settings.packages).toHaveLength(1);
+			expect(realpathSync(join(dirname(settingsPath), settings.packages?.[0] ?? ""))).toBe(realpathSync(extDir));
 			expect(existsSync(join(tempRoot, "home", ".pi"))).toBe(false);
 		});
 	});
