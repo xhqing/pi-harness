@@ -2,6 +2,8 @@
 
 ### Fixed
 
+- **Kimi 的 `maxTokens` 断言随上游目录刷新**（2026-11-15）。为什么：`packages/ai` 的 `build` 每次都会从 models.dev 重新生成 `providers/data/`，上游把 `fireworks` 的 `accounts/fireworks/routers/kimi-latest` 与 `together` 的 `moonshotai/Kimi-K3` 的 `maxTokens` 从 131072 提到 1048576（与 `contextWindow` 相同），两条硬编码期望值的断言因此让**所有** PR 的 CI 变红（本机跑 `./test.sh` 用旧的本地数据快照，看不出这个问题）。改了什么：`fireworks-models.test.ts` 与 `together-models.test.ts` 的 `maxTokens` 期望值更新为 1048576，其余断言不动。**仍存在的结构性问题（本次未改）**：这两条用例仍在硬编码上游数值，上游下次调整窗口或定价还会红；可改为区间 / 规则式断言，另行处理。
+
 - **`fireworks-models.test.ts` 不再引用会随上游目录消失的模型 id**（2026-11-08）。为什么：这个测试原来用 `accounts/fireworks/models/inkling` 验证「不做 adaptive thinking 的 Messages 模型回退到 token budget」。模型目录是构建时从 models.dev 重新生成的，inkling 被上游下线后，这个硬编码 id 直接让 `tsgo --noEmit` 报 `TS2345: not assignable to ModelId<...>` 与 `TS2339: forceAdaptiveThinking 不存在`——流水线不是因为代码错了、而是因为上游删了一个模型而变红（同类事故第三次：见 0.0.7 条目里那次 `baseten` / `github-copilot` / `openrouter` 的模型 id 修正，以及更早的 #14）。改了什么：这条用例改成用**合成模型**（`Model<"anthropic-messages">`，`provider: "fireworks"`、不设 `compat.forceAdaptiveThinking`）驱动。被测行为——「不 opt-in adaptive thinking 的 Messages 模型走 budget_tokens 而不是 adaptive + output_config」——只取决于 `compat`，与目录里存不存在某个模型 id 无关；「哪些模型在上游是 toggle-only」属于上游数据，不该由这条单测把守。验证：把本地 `providers/data/fireworks.json` 里的 inkling 删掉（模拟今天的上游状态）后，`tsgo --noEmit` 0 错误、该文件 27 条用例全过；`packages/ai` 全量测试的失败集合与未改动前的 main 完全一致（16 个文件 / 36 条，全部是该机缺真实 API key / 网络导致的集成用例）。
 
 # Changelog
