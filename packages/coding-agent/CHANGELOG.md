@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- **`pi-alt`: a second identity that shares this package's runtime but keeps its own configuration** ([#64](https://github.com/xhqing/pi-harness/issues/64)). Why: running a second, fully isolated Pi on the same machine used to require a second copy of the package (version drift, double upgrades) or an environment-variable override that still shared the project-level `.pi/` directory. What changed: the new `bin/pi-alt.js` wrapper (published source, listed under `files`) bootstraps `<package root>/brands/pi-alt/` on first start — a `package.json` with `piConfig: { name: "pi-alt", configDir: ".pi-alt" }` and `name` / `version` kept in sync with this package, plus relative symlinks to `dist`, `docs`, `examples`, `README.md`, `CHANGELOG.md` — then sets `PI_PACKAGE_DIR` and imports `dist/bundle/cli.js` in the same process. `bin` now exposes `pi-alt`, and `scripts/build-npm-tarball.mjs` refuses to publish a tarball without `package/bin/pi-alt.js`. Environment variable names for a rebranded identity are sanitized to `[A-Z0-9_]` before upper-casing (`PI_ALT_CODING_AGENT_DIR`, `PI_ALT_CODING_AGENT_SESSION_DIR`); the default `pi` identity is unchanged (`PI_CODING_AGENT_DIR`).
+
 ## [0.0.8] - 2026-11-05
 
 ### Fixed

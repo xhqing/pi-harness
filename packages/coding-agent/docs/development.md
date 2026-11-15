@@ -47,6 +47,29 @@ Configure via `package.json`:
 
 Change `name`, `configDir`, and `bin` field for your fork. Affects CLI banner, config paths, and environment variable names.
 
+### A second identity in the same package
+
+This repository ships two identities, `pi` and `pi-alt`, out of one installed package and one shared `dist/bundle/cli.js`. Only the package manifest each process resolves differs:
+
+| | `pi` | `pi-alt` |
+|---|---|---|
+| Entry point | `dist/bundle/cli.js` | `bin/pi-alt.js` |
+| `piConfig.name` | unset (defaults to `pi`) | `pi-alt` |
+| Global config | `~/.pi/agent/` | `~/.pi-alt/agent/` |
+| Project-level config | `<repo>/.pi/` | `<repo>/.pi-alt/` |
+| Config dir env var | `PI_CODING_AGENT_DIR` | `PI_ALT_CODING_AGENT_DIR` |
+| Session dir env var | `PI_CODING_AGENT_SESSION_DIR` | `PI_ALT_CODING_AGENT_SESSION_DIR` |
+
+`bin/pi-alt.js` is shipped source, not a build artifact. On every start it resolves the package root from `import.meta.url` (never from the working directory) and:
+
+1. idempotently provisions `<package root>/brands/pi-alt/` — a real `package.json` (`name` and `version` copied from the main package, `piConfig: { "name": "pi-alt", "configDir": ".pi-alt" }`) plus relative symlinks to `dist`, `docs`, `examples`, `README.md`, and `CHANGELOG.md`;
+2. sets `PI_PACKAGE_DIR` to that directory so the runtime reads its `piConfig`;
+3. imports the shared bundle in the same process, so arguments, signals, and exit codes are inherited without a child process.
+
+`brands/` is runtime state: it is git-ignored and never packed into release tarballs. Replacing the package (for example `pi update --self`) removes it, and the next `pi-alt` start recreates it — both identities always run the same build. Symlinks are relative, so the layout survives any install prefix, and creating them requires symlink support (Developer Mode on Windows, or WSL).
+
+Environment variable names are derived from `piConfig.name` with every character outside `[A-Za-z0-9]` replaced by `_` before upper-casing. A raw `APP_NAME.toUpperCase()` would turn `pi-alt` into the shell-unusable `PI-ALT_CODING_AGENT_DIR`, so the sanitizing step is part of the rebranding mechanism rather than a per-brand special case.
+
 ## Path Resolution
 
 Three execution modes: npm install, standalone binary, tsx from source.
