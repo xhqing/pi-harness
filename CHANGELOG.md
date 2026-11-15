@@ -4,6 +4,14 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 ## [Unreleased]
 
+### Added
+
+- **A second runtime identity, `pi-alt`, inside the same installed package** ([#64](https://github.com/xhqing/pi-harness/issues/64)). Why: one machine needs two fully separate Pi setups (rules, skills, extensions, sessions, credentials), and the earlier routes all leaked somewhere — a second full copy of `dist` drifts in version and has to be upgraded twice, while simply overriding `PI_CODING_AGENT_DIR` leaves both identities reading the same project-level `.pi/`. What changed: `bin/pi-alt.js` is shipped source (not a build artifact); on every start it idempotently provisions `<package root>/brands/pi-alt/` with a real `package.json` (`piConfig: { name: "pi-alt", configDir: ".pi-alt" }`, `name` / `version` synced from the main package) plus relative symlinks to `dist`, `docs`, `examples`, `README.md`, and `CHANGELOG.md`, sets `PI_PACKAGE_DIR` to that directory, and imports the shared `dist/bundle/cli.js` in the same process. Both identities therefore run one build and `pi update --self` upgrades both. `pi-alt` keeps global config in `~/.pi-alt/agent/` and project resources in `<repo>/.pi-alt/`, never touching `~/.pi`; the rebranding mechanism now derives environment variable names by replacing every non-alphanumeric character with `_`, so `pi-alt` gets the shell-usable `PI_ALT_CODING_AGENT_DIR` / `PI_ALT_CODING_AGENT_SESSION_DIR` instead of `PI-ALT_...`.
+
+### Changed
+
+- **Repository standards: contribution terms and the copyright holder line** (2026-11-15). Why: the repository had no `CONTRIBUTING.md` / `CONTRIBUTING_cn.md`, so contributors had no written statement of what happens to their copyright, and the copyright line still used the retired `All Contributors` wording, which names no legal person and therefore carries no presumption of authorship. What changed: both CONTRIBUTING files now state that contributors keep their copyright (a pull request is not a transfer) and that contributions are licensed to the project under its MIT licence; `LICENSE.md`, `README.md`, and `README_cn.md` now name the forks copyright holder as `xhqing and contributors`, keeping the upstream authors line untouched.
+
 ### Known risks
 
 - **`scripts/release.mjs` cannot push `main` any more.** The inherited release script commits on `main` and then runs `git push origin main` (step 10). `main` is now protected (pull requests required, `strict` status checks, no force pushes, linear history, squash-only), so that push is rejected with `GH006: Protected branch update failed`. The script is **not used** by this fork — releases go through a bump PR plus a tag (e.g. `chore: bump version to 0.0.7 (#40)`) — but anyone reaching for `npm run release:patch|minor|major` must first port it to a `release/v<version>` branch plus a pull request, or use the standard bump/release flow instead. Tracked as T7 in `TODO.md`.

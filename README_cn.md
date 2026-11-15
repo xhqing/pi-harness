@@ -57,6 +57,25 @@ npm run check         # Lint、格式化与类型检查
 ./pi-test.sh         # 从源码运行 pi（可在任意目录执行）
 ```
 
+## 第二个运行身份：`pi-alt`
+
+发布 tarball 会安装两个共用同一运行时的命令：
+
+- `pi` 的全局配置在 `~/.pi/agent/`，项目级资源读 `<仓库>/.pi/`。
+- `pi-alt` 的全局配置在 `~/.pi-alt/agent/`，项目级资源读 `<仓库>/.pi-alt/`。
+
+因此一台机器用一次安装就能跑两套完全独立的 Pi——凭证、设置、会话、skills、extensions、项目规则互不共享。两个命令执行同一个 `dist/bundle/cli.js`，`pi update --self` 升级一次、两个身份同时生效。
+
+```bash
+npm install -g <release tarball>
+pi        # ~/.pi/agent + .pi/
+pi-alt    # ~/.pi-alt/agent + .pi-alt/
+```
+
+`pi-alt` 的入口是 `bin/pi-alt.js`。首次启动时它在已安装的 `package.json` 旁边生成 `brands/pi-alt/`：一份含 `piConfig.name = "pi-alt"`、`piConfig.configDir = ".pi-alt"` 的身份清单，以及指向共享 `dist`、`docs`、`examples`、`README.md`、`CHANGELOG.md` 的相对软链。该目录是运行期状态——已被 `.gitignore` 忽略、不进发布 tarball——升级后自动重建。链接依赖软链能力：Windows 需要开发者模式（或 WSL），macOS 与 Linux 开箱可用。
+
+配置位置可用 `PI_ALT_CODING_AGENT_DIR` 与 `PI_ALT_CODING_AGENT_SESSION_DIR` 覆盖，`pi-alt --help` 里有完整列表。
+
 ## 构建发布产物
 
 发布产物在本地构建，附到 GitHub Release 上，共两种：
@@ -82,7 +101,7 @@ npm run check         # Lint、格式化与类型检查
 
 MIT 许可证——见 [LICENSE.md](LICENSE.md)。
 
-Copyright (c) 2025 Mario Zechner（原 Pi 项目）。Copyright (c) 2026 All Contributors（本分叉）。
+Copyright (c) 2025 Mario Zechner（原 Pi 项目）。Copyright (c) 2026 xhqing and contributors（本分叉）。
 
 本仓库部分内容源自 [earendil-works/pi](https://github.com/earendil-works/pi)，于 2026-09-19 断开分叉；该部分内容保留原作者版权与 MIT 声明。
 

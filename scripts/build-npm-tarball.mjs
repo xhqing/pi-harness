@@ -100,6 +100,9 @@ function verifyTarball(tarballPath) {
 	if (!listing.split("\n").some((line) => line === "package/dist/bundle/cli.js")) {
 		throw new Error("Tarball is missing dist/bundle/cli.js");
 	}
+	if (!listing.split("\n").some((line) => line === "package/bin/pi-alt.js")) {
+		throw new Error("Tarball is missing bin/pi-alt.js");
+	}
 }
 
 const options = parseArgs();

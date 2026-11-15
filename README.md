@@ -57,6 +57,25 @@ npm run check         # Lint, format, and type check
 ./pi-test.sh         # Run pi from sources (can be run from any directory)
 ```
 
+## Second runtime identity: `pi-alt`
+
+The release tarball installs two commands that share a single runtime:
+
+- `pi` uses `~/.pi/agent/` globally and `<repo>/.pi/` for project resources.
+- `pi-alt` uses `~/.pi-alt/agent/` globally and `<repo>/.pi-alt/` for project resources.
+
+One machine can therefore run two fully separate Pi setups — credentials, settings, sessions, skills, extensions, and project rules stay apart — from one install. Both commands execute the same `dist/bundle/cli.js`, so `pi update --self` upgrades both at once.
+
+```bash
+npm install -g <release tarball>
+pi        # ~/.pi/agent + .pi/
+pi-alt    # ~/.pi-alt/agent + .pi-alt/
+```
+
+The `pi-alt` entry point is `bin/pi-alt.js`. On first start it creates `brands/pi-alt/` beside the installed `package.json`: an identity manifest with `piConfig.name = "pi-alt"` and `piConfig.configDir = ".pi-alt"`, plus relative symlinks to the shared `dist`, `docs`, `examples`, `README.md`, and `CHANGELOG.md`. That directory is runtime state — git-ignored and absent from the tarball — and is recreated automatically after an upgrade. The links are symlinks, so Windows needs Developer Mode (or WSL); macOS and Linux work as-is.
+
+Override the config locations with `PI_ALT_CODING_AGENT_DIR` and `PI_ALT_CODING_AGENT_SESSION_DIR`; `pi-alt --help` lists them.
+
 ## Building release artifacts
 
 Two artifact kinds are built locally and attached to GitHub Releases:
@@ -82,7 +101,7 @@ We treat npm dependency changes as reviewed code changes.
 
 MIT License — see [LICENSE.md](LICENSE.md).
 
-Copyright (c) 2025 Mario Zechner (original Pi project). Copyright (c) 2026 All Contributors (this fork).
+Copyright (c) 2025 Mario Zechner (original Pi project). Copyright (c) 2026 xhqing and contributors (this fork).
 
 Portions of this repository originate from [earendil-works/pi](https://github.com/earendil-works/pi), detached on 2026-09-19; those portions retain their original copyright and MIT notice.
 

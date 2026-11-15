@@ -37,6 +37,7 @@ out.jsonl
 pi-*.html
 out.html
 packages/coding-agent/binaries/
+packages/coding-agent/brands/
 plans/
 .pi/hf-sessions/
 .pi/hf-sessions-backup/
