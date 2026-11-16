@@ -442,13 +442,36 @@ const XAI_RESPONSES_COMPAT: OpenAIResponsesCompat = {
 };
 
 const OPENCODE_OPENAI_COMPLETIONS_LONG_CACHE_RETENTION_UNSUPPORTED_MODELS = new Set([
-	"opencode:deepseek-v4-flash",
+	"opencode:deepseek-v4.1-flash",
 	"opencode:deepseek-v4-pro",
 	"opencode:kimi-k2.5",
 	"opencode:kimi-k2.6",
 	"opencode:minimax-m2.7",
 	"opencode-go:kimi-k2.6",
 ]);
+
+// The list above is keyed by `<provider>:<model id>`, so an upstream rename turns an entry into a
+// silent no-op: that route quietly starts advertising long cache retention again. Report unmatched
+// entries on stderr at the end of generation. Never fail the run — catalog drift should be visible in
+// the build log, not turn every PR's CI red (see issue #42).
+function reportUnmatchedLongCacheRetentionModels(providers: Record<string, Record<string, Model<Api>>>): void {
+	const unmatched = [...OPENCODE_OPENAI_COMPLETIONS_LONG_CACHE_RETENTION_UNSUPPORTED_MODELS].filter((key) => {
+		const separator = key.indexOf(":");
+		const providerModels = providers[key.slice(0, separator)];
+		// A missing provider group means this run had no catalog data for it (stubbed or partial
+		// catalog), so the entry cannot be judged stale.
+		if (!providerModels) return false;
+		return providerModels[key.slice(separator + 1)]?.api !== "openai-completions";
+	});
+	if (unmatched.length === 0) return;
+	console.error(
+		`Warning: ${unmatched.length} entry/entries in OPENCODE_OPENAI_COMPLETIONS_LONG_CACHE_RETENTION_UNSUPPORTED_MODELS no longer match an OpenCode openai-completions model:`,
+	);
+	for (const key of unmatched) console.error(`  ${key}`);
+	console.error(
+		"  Upstream probably renamed the model. Update the entries so those routes keep opting out of long cache retention.",
+	);
+}
 
 // GitHub's "Models with extended capabilities" table lists these Copilot models as supporting
 // the extended 1 million token context window.
@@ -3202,6 +3225,8 @@ async function generateModels() {
 		}
 		console.log(`Generated JSON model catalog under ${generatorOptions.jsonOutputDir}`);
 	}
+
+	reportUnmatchedLongCacheRetentionModels(providers);
 
 	// Print statistics
 	const totalModels = allModels.length;

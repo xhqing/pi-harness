@@ -7,7 +7,15 @@ import path from "node:path";
 
 const DEFAULT_REPO = "earendil-works/pi";
 const DEFAULT_BASE_PATH = "packages/coding-agent";
-const DEFAULT_CHANGELOG = "packages/coding-agent/CHANGELOG.md";
+// Extraction walks these in order and takes the first source whose section for the
+// version is non-empty. The root changelog comes first because it is the version
+// authority of this fork (see CHANGELOG.md); the package changelog stays as a
+// fallback for versions that were only recorded per package. Each source resolves
+// relative links against its own directory, so the base path travels with it.
+const DEFAULT_CHANGELOG_SOURCES = [
+	{ basePath: "", path: "CHANGELOG.md" },
+	{ basePath: DEFAULT_BASE_PATH, path: `${DEFAULT_BASE_PATH}/CHANGELOG.md` },
+];
 const DEFAULT_FIX_SINCE_TAG = "v0.74.0";
 const LEGACY_REPO_RE = /^https:\/\/github\.com\/(?:badlogic|earendil-works)\/pi-mono(?=\/|$)/;
 const URL_SCHEME_RE = /^[a-z][a-z0-9+.-]*:/i;
@@ -17,16 +25,19 @@ function printUsage() {
 	console.log(`Usage: node scripts/release-notes.mjs <command> [options]
 
 Commands:
-  extract              Extract release notes from the coding-agent changelog
+  extract              Extract release notes from the changelogs (root first, package fallback)
   fix-github-releases  Rewrite existing GitHub release note links in place
 
 extract options:
   --version <x.y.z>    Version to extract
   --tag <vX.Y.Z>       Release tag used for repository links (defaults to v<version>)
-  --changelog <path>   Changelog path (default: ${DEFAULT_CHANGELOG})
+  --changelog <path>   Use only this changelog instead of the default sources
+                       (default: ${DEFAULT_CHANGELOG_SOURCES.map((source) => source.path).join(", ")}; first source with the version wins)
   --out <path>         Output file (default: stdout)
   --repo <owner/repo>  GitHub repository for generated links (default: ${DEFAULT_REPO})
-  --base-path <path>   Base path for relative changelog links (default: ${DEFAULT_BASE_PATH})
+  --base-path <path>   Base path for relative changelog links. Per source:
+                       ${DEFAULT_CHANGELOG_SOURCES.map((source) => `${source.path} -> "${source.basePath}"`).join("\n                       ")}.
+                       When given it overrides every source.
 
 fix-github-releases options:
   --repo <owner/repo>     GitHub repository to patch (default: ${DEFAULT_REPO})
@@ -59,8 +70,8 @@ function run(command, args, options = {}) {
 
 function parseOptions(args) {
 	const options = {
-		basePath: DEFAULT_BASE_PATH,
-		changelog: DEFAULT_CHANGELOG,
+		basePath: undefined,
+		changelog: undefined,
 		dryRun: false,
 		out: undefined,
 		repo: DEFAULT_REPO,
@@ -247,21 +258,49 @@ function writeOutput(content, outPath) {
 	process.stdout.write(content);
 }
 
+/**
+ * Changelogs to read, in priority order. An explicit `--changelog` collapses the list
+ * to that single file (and keeps the classic "missing file is an error" behavior),
+ * otherwise the defaults walk root first and package second.
+ */
+function changelogSources(options) {
+	if (options.changelog) {
+		return [{ basePath: options.basePath ?? DEFAULT_BASE_PATH, path: options.changelog }];
+	}
+	return DEFAULT_CHANGELOG_SOURCES.map((source) => ({ basePath: options.basePath ?? source.basePath, path: source.path }));
+}
+
+/** First source whose section for `version` is non-empty; the section and its base path travel together. */
+function firstSourceWithSection(sources, version) {
+	for (const source of sources) {
+		const section = extractChangelogSection(readFileSync(source.path, "utf8"), version);
+		if (section !== "") {
+			return { basePath: source.basePath, section };
+		}
+	}
+	return undefined;
+}
+
 function extractReleaseNotes(options) {
 	const version = options.version ?? (options.tag ? versionFromTag(options.tag) : undefined);
 	if (!version) {
 		throw new Error("extract requires --version or --tag");
 	}
 
-	if (!existsSync(options.changelog)) {
-		throw new Error(`Changelog does not exist: ${options.changelog}`);
+	const sources = changelogSources(options);
+	const existing = sources.filter((source) => existsSync(source.path));
+	if (existing.length === 0) {
+		throw new Error(`Changelog does not exist: ${sources.map((source) => source.path).join(", ")}`);
 	}
 
+	const selected = firstSourceWithSection(existing, version);
 	const tag = normalizeTag(options.tag ?? version);
-	const changelog = readFileSync(options.changelog, "utf8");
-	const section = extractChangelogSection(changelog, version);
-	const rawNotes = section ? `${section}\n` : `Release ${version}\n`;
-	const { markdown } = normalizeReleaseNoteLinks(rawNotes, { basePath: options.basePath, repo: options.repo, tag });
+	const rawNotes = selected ? `${selected.section}\n` : `Release ${version}\n`;
+	const { markdown } = normalizeReleaseNoteLinks(rawNotes, {
+		basePath: selected?.basePath ?? DEFAULT_BASE_PATH,
+		repo: options.repo,
+		tag,
+	});
 	writeOutput(markdown, options.out);
 }
 
@@ -321,7 +360,7 @@ function fixGithubReleases(options) {
 	for (const release of releases) {
 		const tag = release.tag_name;
 		const body = release.body ?? "";
-		const result = normalizeReleaseNoteLinks(body, { basePath: options.basePath, repo: options.repo, tag });
+		const result = normalizeReleaseNoteLinks(body, { basePath: options.basePath ?? DEFAULT_BASE_PATH, repo: options.repo, tag });
 		if (result.markdown === body) {
 			continue;
 		}
