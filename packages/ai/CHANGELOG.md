@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Fixed
+
+- **OpenCode 的 DeepSeek 路由重新声明支持 24 小时缓存保留（生成器名单被上游改名甩在身后）**（2026-11-16）。为什么：`scripts/generate-models.ts` 的 `OPENCODE_OPENAI_COMPLETIONS_LONG_CACHE_RETENTION_UNSUPPORTED_MODELS` 按 `<provider>:<model id>` 精确匹配，上游把 `opencode` 的 `deepseek-v4-flash` 改名为 `deepseek-v4.1-flash` 后，`opencode:deepseek-v4-flash` 不再命中任何模型，该路由随即退回默认值（声明支持 long cache retention），而它实际拒绝 24h 缓存保留——全程没有任何报错，属静默失效，比 CI 变红更难发现。这是同一轮目录漂移留下的第二层问题：[#42](https://github.com/xhqing/pi-harness/issues/42) 报的是编译错误，[#43](https://github.com/xhqing/pi-harness/pull/43) 用「删掉已退役 id」止血（`cache-retention.test.ts` 的 `it.each` 少一行）、[#45](https://github.com/xhqing/pi-harness/pull/45) 把那批用例改成从目录派生候选模型，两条都只处理「测试引用旧 id」，没人注意到生成器自己的名单在同一次改名里一起失效；[#60](https://github.com/xhqing/pi-harness/pull/60) 同属「不要把上游模型 id 钉死在代码里」这一类。改了什么：① 名单条目改名为 `opencode:deepseek-v4.1-flash`；② `generate-models.ts` 在生成结束时统计名单里未命中任何 `openai-completions` 模型的条目，往 stderr 打警告并逐条列出——只提示、不改退出码，上游改名不该让每个 PR 的 CI 变红（那正是 #42 / #44 抱怨的失败模式）；这条警告上线即报出另一个既有陈旧条目 `opencode-go:kimi-k2.6`（上游已下架该模型，本次按「其它条目不动」保留）；③ 回归测试 `opencode-long-cache-retention.test.ts` 按**规则**断言——`opencode` 下每个 `openai-completions` 的 deepseek 路由都必须 `supportsLongCacheRetention === false`，且派生结果非空——不点名具体 id，上游再改名仍然有效。
+
 ## [0.0.9] - 2026-11-15
 
 ### Fixed
