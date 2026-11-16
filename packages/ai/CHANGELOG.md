@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Fixed
+
+- **`fireworks-models.test.ts` 不再硬断言上游的价格与窗口数值**（2026-11-16）。为什么：`packages/ai` 的 build 每次都会从 models.dev 重新生成 `providers/data/`，`accounts/fireworks/routers/kimi-latest` 的价在 2026-11-16 从 input 3 / output 15 变成 2 / 10，而这条用例把数值写死成 3 / 15；由于 `build-check-test` 是 required check，一次纯上游调价就把所有 PR 卡红（PR #69 的两次 attempt 都红在这里，与它改的 workflow 无关）。这是同一类事故的第四次：0.0.9 条目记过 `maxTokens` 131072 → 1048576，更早还有 `anthropic-adaptive-thinking-models.test.ts` 的目录快照与 fireworks 的模型下线。改了什么：把 `contextWindow` / `maxTokens` / `cost` 的精确值断言换成结构性断言——窗口与 token 上限必须 > 0 且 `maxTokens <= contextWindow`，价格各项非负；生成器把字段映射错的真实回归仍会失败，上游调价不再失败。验证：把本地 `providers/data/fireworks.json` 的 `kimi-latest` 改成 2 / 10 / 0.2（复刻 CI 的当天状态）后，该文件 27 条用例全过；改回 3 / 15 / 0.3 同样全过。**已知同类脆弱点（本次未改）**：`providers.test.ts`、`together-models.test.ts`、`zai-coding-plan-models.test.ts` 仍在硬断言 `cost`，上游一调价会以同样方式红。
+
 ## [0.0.9] - 2026-11-15
 
 ### Fixed
