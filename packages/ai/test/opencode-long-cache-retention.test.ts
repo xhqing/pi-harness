@@ -19,7 +19,7 @@ import type { Api, Model } from "../src/types.ts";
 // disabling it for them would remove a capability they may support. Covering them is a
 // separate decision that needs a live request, not an inference from the shared base URL.
 const opencodeDeepSeekModels = (Object.values(MODELS.opencode) as Model<Api>[]).filter(
-	(model) =>
+	(model): model is Model<"openai-completions"> =>
 		model.api === "openai-completions" &&
 		model.id.toLowerCase().includes("deepseek") &&
 		!model.id.toLowerCase().endsWith("-free"),
