@@ -28,14 +28,19 @@ describe("Fireworks models", () => {
 		expect(model.baseUrl).toBe("https://api.fireworks.ai/inference");
 		expect(model.reasoning).toBe(true);
 		expect(model.input).toEqual(["text", "image"]);
-		expect(model.contextWindow).toBe(1048576);
-		expect(model.maxTokens).toBe(1048576);
-		expect(model.cost).toEqual({
-			input: 3,
-			output: 15,
-			cacheRead: 0.3,
-			cacheWrite: 0,
-		});
+		// Context window, token limits and prices are upstream metadata: `packages/ai`'s build
+		// regenerates the catalog from the provider's live API, so these numbers move without
+		// any change here (the 2026-11-16 run caught `kimi-latest` moving from 3/15 to 2/10,
+		// and 0.0.9 caught maxTokens going 131072 -> 1048576). Asserting the exact values made
+		// a required check depend on a third party's pricing page. Assert the shape instead:
+		// a wiring or mapping bug still fails, a price update no longer does (issue #42).
+		expect(model.contextWindow).toBeGreaterThan(0);
+		expect(model.maxTokens).toBeGreaterThan(0);
+		expect(model.maxTokens).toBeLessThanOrEqual(model.contextWindow);
+		expect(model.cost.input).toBeGreaterThan(0);
+		expect(model.cost.output).toBeGreaterThan(0);
+		expect(model.cost.cacheRead).toBeGreaterThanOrEqual(0);
+		expect(model.cost.cacheWrite).toBeGreaterThanOrEqual(0);
 	});
 
 	it("aligns GLM 5.3 Fast with GLM 5.3's OpenAI-compatible config", () => {
