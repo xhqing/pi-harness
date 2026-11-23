@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Startup no longer replays the whole inherited changelog: `getNewEntries(entries, lastVersion, currentVersion)` now also bounds the range by the running `VERSION`, so entries inherited from upstream whose version numbers sit far above this fork's `0.0.x` line (0.86.0 … 0.10.0) are never treated as new — the second identity, `pi-alt`, stops re-printing that history on every start. The `/changelog` command still shows the full history ([#75](https://github.com/xhqing/pi-harness/issues/75)).
+
 ## [0.0.9] - 2026-11-15
 
 ### Added

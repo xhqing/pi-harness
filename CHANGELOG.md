@@ -4,6 +4,10 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 ## [Unreleased]
 
+### Fixed
+
+- **`pi-alt` 启动时不再重放继承自上游的整份 CHANGELOG**（[#75](https://github.com/xhqing/pi-harness/issues/75)，2026-11-23）。为什么：本 fork 的 `packages/coding-agent/CHANGELOG.md` 保留了继承自上游的历史（0.86.0 … 0.10.0），这些版本号远大于 fork 自己的 0.0.x 系列；而 `getNewEntries()` 只做「条目版本 > 上次看到的版本」这一次数字比较，于是 `lastChangelogVersion` 停在 `0.0.10` 时，所有继承条目都被判成「新条目」，第二个身份 `pi-alt` 每次启动都把整份历史重放一遍。改了什么：`getNewEntries(entries, lastVersion, currentVersion)` 增加当前运行版本作上限，只返回「比 `lastVersion` 新、且不高于 `currentVersion`」的条目（两次比较都走 `compareVersions`），唯一调用点 `getChangelogForDisplay()` 把 `VERSION` 传进去；`/changelog` 命令仍是用户主动查看全部历史，行为不变。回归测试：`packages/coding-agent/test/changelog.test.ts` 钉住三条——高于当前运行版本的条目永远不算新、只返回两个版本之间的条目、`lastVersion` 高于当前版本时返回空。
+
 ### Known risks
 
 - **`scripts/release.mjs` cannot push `main` any more.** The inherited release script commits on `main` and then runs `git push origin main` (step 10). `main` is now protected (pull requests required, `strict` status checks, no force pushes, linear history, squash-only), so that push is rejected with `GH006: Protected branch update failed`. The script is **not used** by this fork — releases go through a bump PR plus a tag (e.g. `chore: bump version to 0.0.7 (#40)`) — but anyone reaching for `npm run release:patch|minor|major` must first port it to a `release/v<version>` branch plus a pull request, or use the standard bump/release flow instead. Tracked as T7 in `TODO.md`.

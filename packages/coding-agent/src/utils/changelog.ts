@@ -176,20 +176,34 @@ export function compareVersions(v1: ChangelogEntry, v2: ChangelogEntry): number 
 	return v1.patch - v2.patch;
 }
 
-/**
- * Get entries newer than lastVersion
- */
-export function getNewEntries(entries: ChangelogEntry[], lastVersion: string): ChangelogEntry[] {
-	// Parse lastVersion
-	const parts = lastVersion.split(".").map(Number);
-	const last: ChangelogEntry = {
+function parseVersionString(version: string): ChangelogEntry {
+	const parts = version.split(".").map(Number);
+	return {
 		major: parts[0] || 0,
 		minor: parts[1] || 0,
 		patch: parts[2] || 0,
 		content: "",
 	};
+}
 
-	return entries.filter((entry) => compareVersions(entry, last) > 0);
+/**
+ * Get entries newer than lastVersion and not newer than currentVersion.
+ *
+ * The upper bound is required because this fork's CHANGELOG keeps the history inherited
+ * from upstream (0.86.0 … 0.10.0), whose version numbers are far ahead of the fork's own
+ * 0.0.x line. Comparing against lastVersion alone classified every inherited entry as new,
+ * so the second identity replayed the entire history on each start (Issue #75).
+ * Entries above the running version are never "new".
+ */
+export function getNewEntries(
+	entries: ChangelogEntry[],
+	lastVersion: string,
+	currentVersion: string,
+): ChangelogEntry[] {
+	const last = parseVersionString(lastVersion);
+	const current = parseVersionString(currentVersion);
+
+	return entries.filter((entry) => compareVersions(entry, last) > 0 && compareVersions(entry, current) <= 0);
 }
 
 // Re-export getChangelogPath from paths.ts for convenience
