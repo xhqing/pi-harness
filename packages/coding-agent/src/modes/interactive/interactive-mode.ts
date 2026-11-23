@@ -1234,7 +1234,7 @@ export class InteractiveMode {
 			return undefined;
 		}
 
-		const newEntries = getNewEntries(entries, lastVersion);
+		const newEntries = getNewEntries(entries, lastVersion, VERSION);
 		if (newEntries.length > 0) {
 			this.settingsManager.setLastChangelogVersion(VERSION);
 			this.reportInstallTelemetry(VERSION);
