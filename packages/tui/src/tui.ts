@@ -5,8 +5,10 @@
 import { performance } from "node:perf_hooks";
 import { isKeyRelease, matchesKey } from "./keys.ts";
 import type { Terminal } from "./terminal.ts";
+import { cursorColorSequence, RESET_CURSOR_COLOR_SEQUENCE } from "./terminal.ts";
 import {
 	isOsc11BackgroundColorResponse,
+	normalizeCursorColor,
 	parseOsc11BackgroundColor,
 	parseTerminalColorSchemeReport,
 	type RgbColor,
@@ -438,6 +440,8 @@ export interface TUI extends Component {
 	setShowHardwareCursor(enabled: boolean): void;
 	getCursorStyle(): CursorStyle;
 	setCursorStyle(style: CursorStyle): void;
+	getCursorColor(): string | undefined;
+	setCursorColor(color: string | undefined): void;
 	getClearOnShrink(): boolean;
 	setClearOnShrink(enabled: boolean): void;
 	setFocus(component: Component | null): void;
@@ -482,6 +486,8 @@ export abstract class TuiBase extends Container implements TUI {
 	private static readonly MIN_RENDER_INTERVAL_MS = 16;
 	private showHardwareCursor = false;
 	private cursorStyle: CursorStyle = "block";
+	private cursorColor: string | undefined;
+	private cursorColorApplied = false;
 	private clearOnShrink = false;
 	protected fullRedrawCount = 0;
 	protected stopped = false;
@@ -551,6 +557,49 @@ export abstract class TuiBase extends Container implements TUI {
 		if (this.cursorStyle === style) return;
 		this.cursorStyle = style;
 		this.requestRender();
+	}
+
+	getCursorColor(): string | undefined {
+		return this.cursorColor;
+	}
+
+	/**
+	 * Override the terminal's cursor color (OSC 12) while this TUI runs; undefined restores the terminal default.
+	 * Only valid `#rgb` / `#rrggbb` values are applied, since the value is written straight into the terminal stream.
+	 */
+	setCursorColor(color: string | undefined): void {
+		const normalized = normalizeCursorColor(color);
+		if (normalized === this.cursorColor) return;
+		this.cursorColor = normalized;
+		if (this.stopped) return;
+		if (this.cursorColor === undefined) {
+			this.resetCursorColor();
+			return;
+		}
+		this.applyCursorColor();
+	}
+
+	/** Escape sequence that applies the configured cursor color; empty when no color is set. */
+	protected cursorColorPrefix(): string {
+		return this.cursorColor === undefined ? "" : cursorColorSequence(this.cursorColor);
+	}
+
+	private applyCursorColor(): void {
+		if (this.cursorColor === undefined) return;
+		this.terminal.write(cursorColorSequence(this.cursorColor));
+		this.cursorColorApplied = true;
+	}
+
+	private resetCursorColor(): void {
+		if (!this.cursorColorApplied) return;
+		this.terminal.write(RESET_CURSOR_COLOR_SEQUENCE);
+		this.cursorColorApplied = false;
+	}
+
+	/** Show the hardware cursor, applying its color first so a terminal-side reset cannot drop it. */
+	protected showHardwareCursorWithColor(): void {
+		this.applyCursorColor();
+		this.terminal.showCursor();
 	}
 
 	/** Hardware cursor is shown when explicitly enabled or when cursorStyle delegates the caret to it. */
@@ -911,6 +960,7 @@ export abstract class TuiBase extends Container implements TUI {
 		if (this.terminalColorSchemeNotificationsEnabled) {
 			this.terminal.write("\x1b[?2031h");
 		}
+		this.applyCursorColor();
 		this.queryCellSize();
 		this.requestRender();
 	}
@@ -960,6 +1010,7 @@ export abstract class TuiBase extends Container implements TUI {
 			this.terminal.write("\x1b[?2031l");
 		}
 		this.beforeTerminalStop(options);
+		this.resetCursorColor();
 		this.terminal.showCursor();
 		this.terminal.stop();
 		this.afterTerminalStop(options);

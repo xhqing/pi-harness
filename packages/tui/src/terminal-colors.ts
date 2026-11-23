@@ -6,6 +6,25 @@ export interface RgbColor {
 
 export type TerminalColorScheme = "dark" | "light";
 
+const CURSOR_COLOR_PATTERN = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
+
+/**
+ * Normalize a configured cursor color to `#rrggbb`.
+ *
+ * Accepts `#rgb` and `#rrggbb`; anything else (named colors, theme variables, malformed hex) returns undefined so the
+ * terminal keeps its own cursor color.
+ */
+export function normalizeCursorColor(color: string | undefined): string | undefined {
+	if (color === undefined) return undefined;
+	const trimmed = color.trim();
+	if (!CURSOR_COLOR_PATTERN.test(trimmed)) return undefined;
+	const hex = trimmed.slice(1).toLowerCase();
+	if (hex.length === 3) {
+		return `#${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
+	}
+	return `#${hex}`;
+}
+
 function hexToRgb(hex: string): RgbColor {
 	const normalized = hex.startsWith("#") ? hex.slice(1) : hex;
 	const r = parseInt(normalized.slice(0, 2), 16);

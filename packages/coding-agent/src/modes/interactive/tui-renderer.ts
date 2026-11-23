@@ -9,6 +9,7 @@ export interface InteractiveTuiOptions {
 	readonly tuiMode: "regular" | "fullscreen";
 	readonly showHardwareCursor: boolean;
 	readonly cursorStyle: CursorStyle;
+	readonly cursorColor?: string;
 	readonly logDirectory: string;
 	readonly terminal?: Terminal;
 	readonly onRightClickPaste?: () => void;
@@ -20,6 +21,12 @@ export function createInteractiveTui(options: InteractiveTuiOptions & { readonly
 export function createInteractiveTui(options: InteractiveTuiOptions & { readonly tuiMode: "regular" }): TuiMainScreen;
 export function createInteractiveTui(options: InteractiveTuiOptions): TuiMainScreen | TuiAltScreen;
 export function createInteractiveTui(options: InteractiveTuiOptions): TuiMainScreen | TuiAltScreen {
+	const tui = createTui(options);
+	tui.setCursorColor(options.cursorColor);
+	return tui;
+}
+
+function createTui(options: InteractiveTuiOptions): TuiMainScreen | TuiAltScreen {
 	const terminal = options.terminal ?? new ProcessTerminal();
 	if (options.tuiMode === "fullscreen") {
 		const styleSearchMatch = (text: string) => theme.bg("searchMatchBg", theme.fg("searchMatchText", text));

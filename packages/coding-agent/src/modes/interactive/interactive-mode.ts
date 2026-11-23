@@ -539,6 +539,7 @@ export class InteractiveMode {
 			tuiMode,
 			showHardwareCursor: this.settingsManager.getShowHardwareCursor(),
 			cursorStyle: this.settingsManager.getCursorStyle(),
+			cursorColor: this.settingsManager.getCursorColor(),
 			logDirectory: getAgentDir(),
 			terminal: options.terminal,
 			onRightClickPaste: this.onRightClickPaste,
@@ -812,6 +813,7 @@ export class InteractiveMode {
 		const terminal = previousUi.terminal;
 		const showHardwareCursor = previousUi.getShowHardwareCursor();
 		const cursorStyle = previousUi.getCursorStyle();
+		const cursorColor = previousUi.getCursorColor();
 		const clearOnShrink = previousUi.getClearOnShrink();
 		const onDebug = previousUi.onDebug;
 		if (previousUi instanceof TuiMainScreen) {
@@ -827,6 +829,7 @@ export class InteractiveMode {
 			tuiMode: mode,
 			showHardwareCursor,
 			cursorStyle,
+			cursorColor,
 			logDirectory: getAgentDir(),
 			terminal,
 			onRightClickPaste: this.onRightClickPaste,
@@ -1986,6 +1989,7 @@ export class InteractiveMode {
 		this.outputPad = this.settingsManager.getOutputPad();
 		this.ui.setShowHardwareCursor(this.settingsManager.getShowHardwareCursor());
 		this.ui.setCursorStyle(this.settingsManager.getCursorStyle());
+		this.ui.setCursorColor(this.settingsManager.getCursorColor());
 		const clearOnShrink = this.settingsManager.getClearOnShrink();
 		this.ui.setClearOnShrink(clearOnShrink);
 		if (!clearOnShrink && !this.activeStatusIndicator) {

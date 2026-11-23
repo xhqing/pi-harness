@@ -511,6 +511,27 @@ describe("SettingsManager", () => {
 		});
 	});
 
+	describe("cursorColor", () => {
+		it("defaults to unset, persists normalized hex, and ignores invalid values", async () => {
+			const manager = SettingsManager.create(projectDir, agentDir);
+
+			expect(manager.getCursorColor()).toBeUndefined();
+
+			manager.setCursorColor("#3B82F6");
+			await manager.flush();
+			expect(manager.getCursorColor()).toBe("#3b82f6");
+			const savedSettings = JSON.parse(readFileSync(join(agentDir, "settings.json"), "utf-8"));
+			expect(savedSettings.cursorColor).toBe("#3b82f6");
+
+			manager.setCursorColor("blue");
+			expect(manager.getCursorColor()).toBeUndefined();
+
+			writeFileSync(join(agentDir, "settings.json"), JSON.stringify({ cursorColor: "#abc" }));
+			const reloadedManager = SettingsManager.create(projectDir, agentDir);
+			expect(reloadedManager.getCursorColor()).toBe("#aabbcc");
+		});
+	});
+
 	describe("outputPad", () => {
 		it("should default to 1 and persist binary values", async () => {
 			const manager = SettingsManager.create(projectDir, agentDir);

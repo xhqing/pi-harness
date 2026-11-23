@@ -744,6 +744,7 @@ export async function runClientTui(command: ClientCommand, options: RunClientTui
 		tuiMode: "fullscreen",
 		showHardwareCursor: settingsManager.getShowHardwareCursor(),
 		cursorStyle: settingsManager.getCursorStyle(),
+		cursorColor: settingsManager.getCursorColor(),
 		logDirectory: agentDir,
 	});
 	tui.setClearOnShrink(settingsManager.getClearOnShrink());

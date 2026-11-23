@@ -4,6 +4,10 @@ Root-level changelog and version baseline for the standalone fork. The root vers
 
 ## [Unreleased]
 
+### Added
+
+- **光标颜色可以单独配置，`pi-alt` 因此能用蓝色竖线与 `pi` 的绿色区分开**（[#79](https://github.com/xhqing/pi-harness/issues/79)，2026-11-23）。为什么：两个身份跑在同一个 harness 上，`pi` 用 `cursorStyle: "hardware"` 走终端原生光标（本机配置成 300% 宽度的竖线），`pi-alt` 走默认的 `"block"` 反显方块，形状与颜色都不同，肉眼分不清当前在哪个身份里干活。改了什么：新设置 `cursorColor`（`#rgb` / `#rrggbb`，非法值忽略），渲染层用 OSC 12 设置终端光标颜色、退出（或清空设置）时用 OSC 112 还原；硬件光标每次定位时重新发一次，避免终端侧主题同步把颜色覆盖掉；`pi-alt` 侧只改自己的 `settings.json`（`cursorStyle: "hardware"` + `cursorColor`），`pi` 的行为不变。
+
 ### Known risks
 
 - **`scripts/release.mjs` cannot push `main` any more.** The inherited release script commits on `main` and then runs `git push origin main` (step 10). `main` is now protected (pull requests required, `strict` status checks, no force pushes, linear history, squash-only), so that push is rejected with `GH006: Protected branch update failed`. The script is **not used** by this fork — releases go through a bump PR plus a tag (e.g. `chore: bump version to 0.0.7 (#40)`) — but anyone reaching for `npm run release:patch|minor|major` must first port it to a `release/v<version>` branch plus a pull request, or use the standard bump/release flow instead. Tracked as T7 in `TODO.md`.

@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- 新设置 `cursorColor`（`#rgb` / `#rrggbb`）：覆盖硬件光标颜色，运行时修改立即生效，退出后还原终端默认。配合 `cursorStyle: "hardware"` 可以让第二个身份 `pi-alt` 用自己的颜色（例如蓝色）与 `pi` 区分（[#79](https://github.com/xhqing/pi-harness/issues/79)）。
+
 ## [0.0.11] - 2026-11-23
 
 ### Fixed

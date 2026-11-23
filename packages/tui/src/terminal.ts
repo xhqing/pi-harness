@@ -8,6 +8,13 @@ import { StdinBuffer } from "./stdin-buffer.ts";
 const TERMINAL_PROGRESS_KEEPALIVE_MS = 1000;
 const TERMINAL_PROGRESS_ACTIVE_SEQUENCE = "\x1b]9;4;3\x07";
 const TERMINAL_PROGRESS_CLEAR_SEQUENCE = "\x1b]9;4;0\x07";
+/** OSC 112 restores the cursor color the terminal was configured with. */
+export const RESET_CURSOR_COLOR_SEQUENCE = "\x1b]112\x07";
+
+/** OSC 12 sets the cursor color. `color` must already be normalized to `#rrggbb`. */
+export function cursorColorSequence(color: string): string {
+	return `\x1b]12;${color}\x07`;
+}
 const NATIVE_SHIFT_ENTER_SEQUENCE = "\x1b[13;2u";
 const DESIRED_KITTY_KEYBOARD_PROTOCOL_FLAGS = 7;
 const KEYBOARD_PROTOCOL_RESPONSE_FRAGMENT_TIMEOUT_MS = 150;
