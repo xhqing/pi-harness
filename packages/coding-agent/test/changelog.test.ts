@@ -13,8 +13,7 @@ describe("getNewEntries", () => {
 		const [major, minor, patch] = version.split(".").map(Number);
 		return { major, minor, patch, content: `## [${version}]` };
 	};
-	const versions = (entries: ChangelogEntry[]): string[] =>
-		entries.map((e) => `${e.major}.${e.minor}.${e.patch}`);
+	const versions = (entries: ChangelogEntry[]): string[] => entries.map((e) => `${e.major}.${e.minor}.${e.patch}`);
 
 	// 回归：本 fork 的 CHANGELOG 保留了继承自上游的历史（0.86.0 … 0.10.0），版本号远高于
 	// fork 自己的 0.0.x 系列。这些条目永远不该被当成「新条目」重放（Issue #75）。
