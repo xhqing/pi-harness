@@ -1,6 +1,6 @@
 {
 	"name": "pi-session-backend-sqlite-node",
-	"version": "0.0.11",
+	"version": "0.0.12",
 	"description": "Node sqlite session backend for pi-agent-core sessions",
 	"type": "module",
 	"main": "./dist/index.js",
@@ -35,8 +35,8 @@
 		"node": ">=22.19.0"
 	},
 	"dependencies": {
-		"pi-ai": "^0.0.11",
-		"pi-agent-core": "^0.0.11"
+		"pi-ai": "^0.0.12",
+		"pi-agent-core": "^0.0.12"
 	},
 	"devDependencies": {
 		"@vitest/coverage-v8": "4.1.9",
