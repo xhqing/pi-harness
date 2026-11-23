@@ -80,9 +80,10 @@ export { getNativeClipboard, type NativeClipboard } from "./native-platform.ts";
 // Input buffering for batch splitting
 export { StdinBuffer, type StdinBufferEventMap, type StdinBufferOptions } from "./stdin-buffer.ts";
 // Terminal interface and implementations
-export { ProcessTerminal, type Terminal } from "./terminal.ts";
+export { cursorColorSequence, ProcessTerminal, RESET_CURSOR_COLOR_SEQUENCE, type Terminal } from "./terminal.ts";
 // Terminal colors
 export {
+	normalizeCursorColor,
 	parseOsc11BackgroundColor,
 	parseTerminalColorSchemeReport,
 	type RgbColor,

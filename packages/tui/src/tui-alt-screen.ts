@@ -1714,7 +1714,7 @@ export class TuiAltScreen extends TuiBase implements ViewportTUI {
 
 		if (cursorPos) {
 			buffer += `\x1b[${cursorPos.row + 1};${Math.min(width, cursorPos.col) + 1}H`;
-			buffer += this.shouldShowHardwareCursor() ? "\x1b[?25h" : "\x1b[?25l";
+			buffer += this.shouldShowHardwareCursor() ? `${this.cursorColorPrefix()}\x1b[?25h` : "\x1b[?25l";
 		} else {
 			buffer += "\x1b[?25l";
 		}

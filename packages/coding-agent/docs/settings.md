@@ -67,6 +67,7 @@ Use `/trust` in interactive mode to save a project trust decision for future ses
 | `autocompleteMaxVisible` | number | `5` | Max visible items in autocomplete dropdown (3-20) |
 | `showHardwareCursor` | boolean | `false` | Show the terminal cursor while TUI positions it for IME support |
 | `cursorStyle` | string | `"block"` | Editor caret style: `"block"` draws the reverse-video block caret; `"hardware"` hides it and uses the terminal's native cursor as the caret (implies `showHardwareCursor`) |
+| `cursorColor` | string | - | Cursor color override for the hardware cursor, e.g. `"#3b82f6"`. Accepts `#rgb` / `#rrggbb`, applied with OSC 12 while pi runs and restored on exit; unset keeps the terminal's own cursor color |
 | `tuiMode` | string | `"regular"` | Interactive TUI mode: `"regular"` or experimental `"fullscreen"`. Changes from `/settings` apply immediately; `--tui-mode` overrides this setting at startup |
 | `fullscreenExitOutput` | string | `"transcript"` | Fullscreen exit output: `"transcript"` prints the final transcript and resume hint, while `"resume-hint"` restores the previous screen and prints only the resume hint. Has no effect in regular TUI mode |
 | `fullscreenScrollbar` | string | `"auto"` | Fullscreen transcript scrollbar: `"auto"` shows it temporarily while scrolling or while the pointer is over its rightmost-column track, `"always"` reserves that column and keeps it visible, and `"hidden"` hides it. Has no effect in regular TUI mode |

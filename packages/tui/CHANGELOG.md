@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `TUI` 增加 `getCursorColor()` / `setCursorColor(color?)`：接受 `#rgb` / `#rrggbb`，有值时用 OSC 12 覆盖终端光标颜色、清空时用 OSC 112 还原；`start()` 应用一次，硬件光标每次定位时重发一次，`stop()` 前还原。`normalizeCursorColor()` 与 `cursorColorSequence()` 一并导出。
+
 ## [0.0.7] - 2026-10-23
 
 ### Added
