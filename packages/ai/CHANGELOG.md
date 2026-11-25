@@ -1,3 +1,11 @@
+# Changelog
+
+## [Unreleased]
+
+### Fixed
+
+- **测试与生成器对齐 2026-11-25 的模型目录（Mistral / OpenCode / Together / GitHub Copilot 的下线 id）**。为什么：`packages/ai` 的 build 每次都从 models.dev 重新生成 `providers/data/`，上游下线 `devstral-medium-latest`、`pixtral-12b`、`opencode` 的 `kimi-k2.6`、`together` 的 `MiniMaxAI/MiniMax-M3`、`github-copilot` 的 `claude-opus-5` 之后，`tsgo --noEmit` 在 10 个测试文件里报类型错误，`build-check-test` 这个 required check 让所有 PR 变红（PR #82 只是改文档也被挡）。改了什么：① Mistral 文本用例改用 `mistral-medium-latest`、图像用例改用 `ministral-14b-latest`；② OpenCode 的 Kimi 用例改用当前目录里的 `kimi-k3`，并删掉生成器里已无法命中的 Kimi K2.6 专用 `thinkingFormat: "deepseek"` 特判与配套用例（OpenCode 已不提供 K2.6，K3 的目录给出 effort 档位，不再走 Anthropic 式开关）；③ Together 的 MiniMax 用例改用 `MiniMaxAI/MiniMax-M3.1-Flash`；④ Copilot 的 opus 用例改用 `claude-opus-5.5`，`GITHUB_COPILOT_THINKING_LEVEL_OVERRIDES` 与 1M 上下文名单里的 `claude-opus-5` 同步改名为 `claude-opus-5.5`；⑤ `providers.test.ts` 的 Copilot 断言改用仍在下发目录里的 `gpt-5.6-sol` 与 `claude-fable-5`（原 `gpt-5.6-terra` 与 `claude-opus-5` 已不在 Copilot 目录里）；⑥ `qwen-token-plan-models.test.ts` 的模型清单刷新到今天的目录（`deepseek-v3.2` / `deepseek-v4-flash` 已下架，新增 `deepseek-v4-flash-0731` / `deepseek-v4.1-flash*` / `glm-5.3` / `qwen4-max`）。验证：`tsgo --noEmit` 0 错误；受影响的 15 个测试文件在无 provider key（与 CI 同条件）下 56 passed / 666 skipped；`packages/ai` 全量测试与 `biome check` 通过。
+
 ## [0.0.10] - 2026-11-16
 
 ### Fixed

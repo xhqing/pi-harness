@@ -480,7 +480,7 @@ const GITHUB_COPILOT_EXTENDED_CONTEXT_MODELS = new Set([
 	"claude-opus-4.6",
 	"claude-opus-4.7",
 	"claude-opus-4.8",
-	"claude-opus-5",
+	"claude-opus-5.5",
 	"claude-sonnet-4.6",
 	"claude-sonnet-5",
 	"gpt-5.3-codex",
@@ -493,7 +493,7 @@ const GITHUB_COPILOT_EXTENDED_CONTEXT_MODELS = new Set([
 const GITHUB_COPILOT_THINKING_LEVEL_OVERRIDES = {
 	"claude-opus-4.7": { minimal: "low" },
 	"claude-opus-4.8": { minimal: "low" },
-	"claude-opus-5": { minimal: "low" },
+	"claude-opus-5.5": { minimal: "low" },
 	"claude-sonnet-4.6": { minimal: "low", max: "max" },
 } satisfies Record<string, NonNullable<Model<Api>["thinkingLevelMap"]>>;
 
@@ -1120,10 +1120,6 @@ function applyThinkingLevelMetadata(model: Model<any>): void {
 	}
 	if (model.provider === "opencode-go" && model.id === "glm-5.2") {
 		mergeThinkingLevelMap(model, OPENCODE_GO_GLM52_THINKING_LEVEL_MAP);
-	}
-	if (model.provider === "opencode-go" && model.id === "kimi-k2.6") {
-		// OpenCode Go exposes Kimi K2.6 thinking as on/off, not distinct effort tiers.
-		mergeThinkingLevelMap(model, { minimal: null, low: null, medium: null });
 	}
 	if (model.provider === "opencode" && model.id === "grok-build-0.1") {
 		// OpenCode Zen Grok Build reasons by default but rejects explicit reasoningEffort.
@@ -2169,12 +2165,6 @@ async function loadModelsDevData(): Promise<Model<any>[]> {
 
 				if (variant.provider === "opencode" && modelId === "grok-build-0.1") {
 					compat = { ...(compat ?? {}), supportsReasoningEffort: false };
-				}
-
-				if ((variant.provider === "opencode" || variant.provider === "opencode-go") && modelId === "kimi-k2.6") {
-					// OpenCode Kimi K2.6 accepts Anthropic-style thinking objects
-					// and rejects string thinking values or combined reasoning_effort.
-					compat = { ...(compat ?? {}), thinkingFormat: "deepseek", supportsReasoningEffort: false };
 				}
 
 				// Fix known mismatches between models.dev npm data and actual
