@@ -1,6 +1,6 @@
 {
 	"name": "pi-durable",
-	"version": "0.0.12",
+	"version": "0.0.13",
 	"description": "Durable conversation, task, and document runtime for Pi",
 	"type": "module",
 	"main": "./dist/index.js",
@@ -42,8 +42,8 @@
 		"node": ">=22.19.0"
 	},
 	"dependencies": {
-		"chord": "^0.0.12",
-		"pi-ai": "^0.0.12"
+		"chord": "^0.0.13",
+		"pi-ai": "^0.0.13"
 	},
 	"devDependencies": {
 		"shx": "0.4.0",
