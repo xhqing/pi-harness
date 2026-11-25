@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- **默认模型表跟进 2026-11-25 的模型目录：Mistral 与 OpenCode 的默认 id 换成仍在目录里的模型**。为什么：`defaultModelPerProvider` 的 `mistral: "devstral-medium-latest"` 与 `opencode: "kimi-k2.6"` 在上游目录里已不存在，`model-resolver.test.ts` 的「built-in defaults exist in generated provider catalogs」会失败，`/model` 默认解析也拿不到模型。改了什么：分别改为 `mistral-medium-latest` 与 `kimi-k3`。验证：`model-resolver.test.ts` / `model-registry.test.ts` 共 136 条通过，`tsgo --noEmit` 0 错误。
+
 ## [0.0.12] - 2026-11-23
 
 ### Added
