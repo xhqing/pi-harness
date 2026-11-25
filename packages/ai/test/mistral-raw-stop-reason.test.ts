@@ -3,7 +3,7 @@ import { stream as streamMistral } from "../src/api/mistral-conversations.ts";
 import { getModel, normalizeContext } from "../src/compat.ts";
 import type { FetchFunction } from "../src/types.ts";
 
-const model = getModel("mistral", "devstral-medium-latest");
+const model = getModel("mistral", "mistral-medium-latest");
 const context = normalizeContext({
 	messages: [{ role: "user", content: "hello", timestamp: Date.now() }],
 });
